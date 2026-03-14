@@ -61,25 +61,25 @@ function buildTop5Table(rows, priceLabel) {
 
 function loadTop5Tables(regionId, sigunguCodes) {
     const areaType = currentAreaType;
-    const primaryCode = sigunguCodes[0];
+    const codesParam = sigunguCodes.join(',');
 
     const tradeEl = document.getElementById('table-top5-trade-' + regionId);
     const leaseEl = document.getElementById('table-top5-lease-' + regionId);
 
     if (tradeEl) {
         tradeEl.innerHTML = KrEconoMon.loadingSpinner();
-        fetch(`/krEconoMon/api/real-estate/top5/trade?sigunguCode=${primaryCode}&areaType=${areaType}`)
+        fetch(`/krEconoMon/api/real-estate/top5/trade?codes=${codesParam}&areaType=${areaType}`)
             .then(res => res.json())
-            .then(rows => { tradeEl.innerHTML = buildTop5Table(rows, '매매가'); })
-            .catch(() => { tradeEl.innerHTML = KrEconoMon.errorMessage('TOP5 데이터를 불러올 수 없습니다.'); });
+            .then(rows => { tradeEl.innerHTML = buildTop5Table(rows, '평균매매가'); })
+            .catch(() => { tradeEl.innerHTML = KrEconoMon.errorMessage('TOP10 데이터를 불러올 수 없습니다.'); });
     }
 
     if (leaseEl) {
         leaseEl.innerHTML = KrEconoMon.loadingSpinner();
-        fetch(`/krEconoMon/api/real-estate/top5/lease?sigunguCode=${primaryCode}&areaType=${areaType}`)
+        fetch(`/krEconoMon/api/real-estate/top5/lease?codes=${codesParam}&areaType=${areaType}`)
             .then(res => res.json())
-            .then(rows => { leaseEl.innerHTML = buildTop5Table(rows, '전세가'); })
-            .catch(() => { leaseEl.innerHTML = KrEconoMon.errorMessage('TOP5 데이터를 불러올 수 없습니다.'); });
+            .then(rows => { leaseEl.innerHTML = buildTop5Table(rows, '평균전세가'); })
+            .catch(() => { leaseEl.innerHTML = KrEconoMon.errorMessage('TOP10 데이터를 불러올 수 없습니다.'); });
     }
 }
 

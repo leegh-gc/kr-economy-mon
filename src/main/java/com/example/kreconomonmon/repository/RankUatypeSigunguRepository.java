@@ -8,8 +8,8 @@ import java.util.List;
 
 public interface RankUatypeSigunguRepository extends JpaRepository<RankUatypeSigungu, Long> {
 
-    List<RankUatypeSigungu> findBySigunguCodeAndUseAreaTypeAndDealYearAndRankTypeOrderByAvgPriceDesc(
-        String sigunguCode,
+    List<RankUatypeSigungu> findBySigunguCodeInAndUseAreaTypeAndDealYearAndRankTypeOrderByAvgPriceDesc(
+        List<String> sigunguCode,
         String useAreaType,
         String dealYear,
         Integer rankType,

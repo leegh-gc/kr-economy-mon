@@ -111,11 +111,11 @@ public class RealEstateService {
         return ChartDataResponse.builder().labels(labels).datasets(datasets).build();
     }
 
-    public List<Top5Response> getTop5Trade(String sigunguCode, String useAreaType) {
+    public List<Top5Response> getTop5Trade(List<String> sigunguCodes, String useAreaType) {
         String currentYear = String.valueOf(LocalDate.now().getYear());
         List<RankUatypeSigungu> rows = tradeTop5Repository
-            .findBySigunguCodeAndUseAreaTypeAndDealYearAndRankTypeOrderByAvgPriceDesc(
-                sigunguCode, useAreaType, currentYear, 0, PageRequest.of(0, 10));
+            .findBySigunguCodeInAndUseAreaTypeAndDealYearAndRankTypeOrderByAvgPriceDesc(
+                sigunguCodes, useAreaType, currentYear, 0, PageRequest.of(0, 10));
 
         return rows.stream()
             .map(r -> Top5Response.builder()
@@ -130,11 +130,11 @@ public class RealEstateService {
             .toList();
     }
 
-    public List<Top5Response> getTop5Lease(String sigunguCode, String useAreaType) {
+    public List<Top5Response> getTop5Lease(List<String> sigunguCodes, String useAreaType) {
         String currentYear = String.valueOf(LocalDate.now().getYear());
         List<RankUatypeSigunguLease> rows = leaseTop5Repository
-            .findBySigunguCodeAndUseAreaTypeAndDealYearAndRankTypeAndRentGbnOrderByAvgDepositDesc(
-                sigunguCode, useAreaType, currentYear, 0, "0", PageRequest.of(0, 10));
+            .findBySigunguCodeInAndUseAreaTypeAndDealYearAndRankTypeAndRentGbnOrderByAvgDepositDesc(
+                sigunguCodes, useAreaType, currentYear, 0, "0", PageRequest.of(0, 10));
 
         return rows.stream()
             .map(r -> Top5Response.builder()

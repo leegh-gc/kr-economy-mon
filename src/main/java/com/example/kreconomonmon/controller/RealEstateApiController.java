@@ -65,16 +65,16 @@ public class RealEstateApiController {
 
     @GetMapping("/top5/trade")
     public ResponseEntity<List<Top5Response>> getTop5Trade(
-            @RequestParam String sigunguCode,
+            @RequestParam String codes,
             @RequestParam(defaultValue = "UA04") String areaType) {
-        return ResponseEntity.ok(realEstateService.getTop5Trade(sigunguCode, areaType));
+        return ResponseEntity.ok(realEstateService.getTop5Trade(Arrays.asList(codes.split(",")), areaType));
     }
 
     @GetMapping("/top5/lease")
     public ResponseEntity<List<Top5Response>> getTop5Lease(
-            @RequestParam String sigunguCode,
+            @RequestParam String codes,
             @RequestParam(defaultValue = "UA04") String areaType) {
-        return ResponseEntity.ok(realEstateService.getTop5Lease(sigunguCode, areaType));
+        return ResponseEntity.ok(realEstateService.getTop5Lease(Arrays.asList(codes.split(",")), areaType));
     }
 
     private ChartDataResponse.Dataset toDataset(

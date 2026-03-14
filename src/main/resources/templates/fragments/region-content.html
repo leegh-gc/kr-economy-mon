@@ -10,7 +10,7 @@
             <div class="card">
                 <div class="card-header">
                     <h6 class="mb-0 fw-bold">
-                        <span th:text="${regionName}">권역</span> 매매가 추이
+                        <span th:text="${regionName}">권역</span> 평균매매가 추이
                     </h6>
                     <small class="text-muted" th:text="${districtNames}">구 목록</small>
                 </div>
@@ -29,7 +29,7 @@
             <div class="card">
                 <div class="card-header">
                     <h6 class="mb-0 fw-bold">
-                        <span th:text="${regionName}">권역</span> 전세가 추이
+                        <span th:text="${regionName}">권역</span> 평균전세가 추이
                     </h6>
                     <small class="text-muted" th:text="${districtNames}">구 목록</small>
                 </div>
@@ -50,7 +50,7 @@
         <div class="col-12 col-lg-6">
             <div class="card">
                 <div class="card-header">
-                    <h6 class="mb-0 fw-bold">올해 매매가 TOP 5</h6>
+                    <h6 class="mb-0 fw-bold">올해 평균매매가 TOP 10</h6>
                 </div>
                 <div class="card-body p-2">
                     <div th:id="'table-top5-trade-' + ${regionId}" class="text-muted text-center py-3">
@@ -67,7 +67,7 @@
         <div class="col-12 col-lg-6">
             <div class="card">
                 <div class="card-header">
-                    <h6 class="mb-0 fw-bold">올해 전세가 TOP 5</h6>
+                    <h6 class="mb-0 fw-bold">올해 평균전세가 TOP 10</h6>
                 </div>
                 <div class="card-body p-2">
                     <div th:id="'table-top5-lease-' + ${regionId}" class="text-muted text-center py-3">
