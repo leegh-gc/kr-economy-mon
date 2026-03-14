@@ -47,6 +47,6 @@ public class RankUatypeSigungu {
     @Column(name = "max_price", precision = 15, scale = 2)
     private BigDecimal maxPrice;
 
-    @Column(name = "deal_count")
+    @Column(name = "trade_count")
     private Integer dealCount;
 }

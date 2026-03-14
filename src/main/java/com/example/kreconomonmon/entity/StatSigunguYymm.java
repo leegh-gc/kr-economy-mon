@@ -35,6 +35,6 @@ public class StatSigunguYymm {
     @Column(name = "max_price", precision = 15, scale = 2)
     private BigDecimal maxPrice;
 
-    @Column(name = "deal_count")
+    @Column(name = "total_count")
     private Integer dealCount;
 }

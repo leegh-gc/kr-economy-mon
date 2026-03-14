@@ -50,6 +50,6 @@ public class RankUatypeSigunguLease {
     @Column(name = "max_deposit", precision = 15, scale = 2)
     private BigDecimal maxDeposit;
 
-    @Column(name = "deal_count")
+    @Column(name = "trade_count")
     private Integer dealCount;
 }
