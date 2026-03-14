@@ -2,14 +2,17 @@ package com.example.kreconomonmon.controller;
 
 import com.example.kreconomonmon.dto.ChartDataResponse;
 import com.example.kreconomonmon.entity.EconomyIndicator;
+import com.example.kreconomonmon.service.EconomyIndicatorScheduler;
 import com.example.kreconomonmon.service.EconomyIndicatorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -18,6 +21,13 @@ import java.util.stream.Collectors;
 public class EconomyApiController {
 
     private final EconomyIndicatorService economyIndicatorService;
+    private final EconomyIndicatorScheduler economyIndicatorScheduler;
+
+    @PostMapping("/refresh")
+    public ResponseEntity<Map<String, String>> refresh() {
+        economyIndicatorScheduler.refreshAllIndicators();
+        return ResponseEntity.ok(Map.of("status", "ok", "message", "경제 지표 갱신 완료"));
+    }
 
     // ── 섹션1: 금리 ──────────────────────────────────────
     @GetMapping("/interest-rate")
