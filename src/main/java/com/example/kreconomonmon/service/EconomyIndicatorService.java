@@ -10,6 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -57,6 +60,52 @@ public class EconomyIndicatorService {
                 .toList();
 
         return saved;
+    }
+
+    /**
+     * ECOS API를 직접 호출하여 누락 데이터를 upsert한다.
+     * 스케줄러가 매일 1회 호출 — DB 선조회 없이 항상 API 호출.
+     */
+    @Transactional
+    public void refreshFromApi(String statCode, String cycle, String itemCode) {
+        List<EcosApiResponse.Row> rows = ecosApiService.fetchStatistic(statCode, cycle, itemCode);
+        if (rows.isEmpty()) {
+            log.warn("ECOS API 데이터 없음: statCode={}, itemCode={}", statCode, itemCode);
+            return;
+        }
+
+        Map<String, EconomyIndicator> existingByPeriod = repository
+                .findByStatCodeAndItemCodeOrderByPeriodAsc(statCode, itemCode)
+                .stream()
+                .collect(Collectors.toMap(EconomyIndicator::getPeriod, Function.identity()));
+
+        int inserted = 0, updated = 0;
+        for (EcosApiResponse.Row row : rows) {
+            if (row.getDataValue() == null || row.getDataValue().isBlank()) continue;
+            BigDecimal value;
+            try {
+                value = new BigDecimal(row.getDataValue());
+            } catch (NumberFormatException e) {
+                log.warn("숫자 변환 실패: period={}, value={}", row.getTime(), row.getDataValue());
+                continue;
+            }
+
+            EconomyIndicator existing = existingByPeriod.get(row.getTime());
+            if (existing != null) {
+                existing.updateValue(value);
+                updated++;
+            } else {
+                repository.save(EconomyIndicator.builder()
+                        .statCode(statCode)
+                        .itemCode(itemCode)
+                        .period(row.getTime())
+                        .value(value)
+                        .build());
+                inserted++;
+            }
+        }
+        log.info("ECOS 갱신 완료: statCode={}, itemCode={}, inserted={}, updated={}",
+                statCode, itemCode, inserted, updated);
     }
 
     /**
