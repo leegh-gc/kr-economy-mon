@@ -32,6 +32,9 @@ public class RankUatypeSigunguLease {
     @Column(name = "rent_gbn", length = 2)
     private String rentGbn;
 
+    @Column(name = "sigungu_name", length = 50)
+    private String sigunguName;
+
     @Column(name = "apt_name", length = 100)
     private String aptName;
 

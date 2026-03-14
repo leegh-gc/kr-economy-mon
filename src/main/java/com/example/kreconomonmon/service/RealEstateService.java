@@ -115,12 +115,12 @@ public class RealEstateService {
         String currentYear = String.valueOf(LocalDate.now().getYear());
         List<RankUatypeSigungu> rows = tradeTop5Repository
             .findBySigunguCodeAndUseAreaTypeAndDealYearAndRankTypeOrderByAvgPriceDesc(
-                sigunguCode, useAreaType, currentYear, 0, PageRequest.of(0, 5));
+                sigunguCode, useAreaType, currentYear, 0, PageRequest.of(0, 10));
 
         return rows.stream()
             .map(r -> Top5Response.builder()
                 .aptName(r.getAptName())
-                .dongName(r.getDongName())
+                .dongName(r.getSigunguName() + " " + r.getDongName())
                 .buildYear(r.getBuildYear())
                 .avgPrice(r.getAvgPrice())
                 .minPrice(r.getMinPrice())
@@ -134,12 +134,12 @@ public class RealEstateService {
         String currentYear = String.valueOf(LocalDate.now().getYear());
         List<RankUatypeSigunguLease> rows = leaseTop5Repository
             .findBySigunguCodeAndUseAreaTypeAndDealYearAndRankTypeAndRentGbnOrderByAvgDepositDesc(
-                sigunguCode, useAreaType, currentYear, 0, "0", PageRequest.of(0, 5));
+                sigunguCode, useAreaType, currentYear, 0, "0", PageRequest.of(0, 10));
 
         return rows.stream()
             .map(r -> Top5Response.builder()
                 .aptName(r.getAptName())
-                .dongName(r.getDongName())
+                .dongName(r.getSigunguName() + " " + r.getDongName())
                 .buildYear(r.getBuildYear())
                 .avgPrice(r.getAvgDeposit())
                 .minPrice(r.getMinDeposit())

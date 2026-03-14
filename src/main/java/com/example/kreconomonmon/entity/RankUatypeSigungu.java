@@ -29,6 +29,9 @@ public class RankUatypeSigungu {
     @Column(name = "rank_type")
     private Integer rankType;
 
+    @Column(name = "sigungu_name", length = 50)
+    private String sigunguName;
+
     @Column(name = "apt_name", length = 100)
     private String aptName;
 
