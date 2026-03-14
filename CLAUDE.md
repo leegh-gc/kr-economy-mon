@@ -22,7 +22,7 @@ Server runs at `http://localhost:8086/krEconoMon`
 | CSS | Bootstrap 5.3.3 (CDN) |
 | AI | Gemini REST API via `java.net.http.HttpClient` |
 | Economic Data | ECOS API (한국은행) |
-| Build | Gradle 8.8, Java 17+ |
+| Build | Gradle 8.8, Java 21 |
 
 ## Build & Run Commands
 
