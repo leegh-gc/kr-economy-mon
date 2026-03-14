@@ -14,7 +14,15 @@
       "Read(//c/Users/leegh.UBWARE/**)",
       "Bash(./gradlew test:*)",
       "Bash(./gradlew.bat test:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(./gradlew --version 2>&1)",
+      "Bash(java:*)",
+      "Bash(echo:*)",
+      "Bash(~/.gradle/wrapper/dists/gradle-8.8-bin/dl7vupf4psengwqhwktix4v1/gradle-8.8/bin/gradle --version 2>&1)",
+      "Bash(~/.gradle/wrapper/dists/gradle-8.8-bin/dl7vupf4psengwqhwktix4v1/gradle-8.8/bin/gradle -p /c/Git/kr-economy-mon test 2>&1)",
+      "Bash(~/.gradle/wrapper/dists/gradle-8.8-bin/dl7vupf4psengwqhwktix4v1/gradle-8.8/bin/gradle -p /c/Git/kr-economy-mon test --info 2>&1 | grep -E \"Test.*PASSED|Test.*FAILED|tests were\" | head -60)",
+      "Bash(~/.gradle/wrapper/dists/gradle-8.8-bin/dl7vupf4psengwqhwktix4v1/gradle-8.8/bin/gradle -p /c/Git/kr-economy-mon clean build 2>&1 | tail -20)",
+      "Bash(which gh:*)"
     ]
   }
 }

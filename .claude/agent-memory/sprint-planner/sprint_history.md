@@ -15,7 +15,7 @@ Sprint 3 계획 수립 완료 (2026-03-14). 계획 파일: `docs/plans/2026-03-1
 | Sprint 2 | Phase 2 | Week 3~4 (2026-03-28~04-10) | 완료 | ECOS API 클라이언트, EconomyIndicator JPA, 경제 섹션 1~4 차트(금리/GDP/환율/물가) |
 | Sprint 3 | Phase 2+3 | Week 5~6 (2026-04-11~04-24) | 계획 완료 | 경제 섹션 5~8 (P2-7~P2-10) + 부동산 DB 연동 + KB지수 + 권역별 차트 (P3-1~P3-4) |
 | Sprint 4 | Phase 3+4 | Week 7~8 (2026-04-25~05-08) | 계획 완료 | TOP5 테이블(P3-5~P3-7) + 캐시 레이어(P4-1) + Gemini 분석 텍스트(P4-2~P4-4) |
-| Sprint 5 | Phase 4+5 | Week 9~10 | 예정 | Gemini 컷툰 + 통합 QA + 성능 최적화 + 배포 |
+| Sprint 5 | Phase 4+5 | Week 9~10 (2026-05-09~05-22) | 계획 완료 | Gemini 컷툰(P4-5~P4-7) + 통합 QA + 성능 최적화 + 배포(P5-1~P5-5) |
 
 ## Sprint 2 핵심 기술 결정 사항 (2026-03-14)
 
@@ -23,6 +23,18 @@ Sprint 3 계획 수립 완료 (2026-03-14). 계획 파일: `docs/plans/2026-03-1
 - `EconomyIndicatorService`: DB 비어 있을 때만 ECOS 재호출 (단순 비어있음 판단, stale 판단은 Sprint 3 이후 개선 예정)
 - `ChartDataResponse` DTO: `yAxisID` 필드로 이중 Y축 지원 (환율 차트 JPY 우축)
 - application-local.yml DataSource exclude는 Sprint 2 Task 1에서 제거
+
+## Sprint 5 핵심 기술 결정 사항 (2026-03-14)
+
+- 컷툰 이미지 저장: `analysis_cache.image_data` TEXT 컬럼에 Base64 저장 (`image_url` 컬럼 대체) — V5 DDL 마이그레이션
+- Gemini 이미지 생성: `responseModalities: ["IMAGE", "TEXT"]` 요청, `extractImageFromResponse()` package-private으로 단위 테스트 가능
+- 이미지 생성 불가 시: `Optional.empty()` 반환 → graceful degradation (텍스트만 표시)
+- 동시 요청 lock: `ReentrantLock` (경제/부동산 각 1개) — 동시 Gemini 호출 방지
+- 수동 재분석: `POST /api/gemini/refresh` → `AnalysisCacheService.invalidateAll()` → hash를 "INVALIDATED"로 교체
+- `CartoonResponse` 신규 DTO: `imageData`(String) + `available`(boolean) 필드
+- 통합 테스트: `@WebMvcTest` 계층 격리 (TestContainers 미사용 — YAGNI)
+- 성능: `Promise.all()` AJAX 병렬화, `sampleIfNeeded(data, 500)` 일별 데이터 샘플링, Gzip 압축
+- 배포: `application-prod.yml` `ddl-auto: validate`, Spring Boot Actuator(health/info/metrics), logback 파일 로테이션 30일
 
 ## Sprint 4 핵심 기술 결정 사항 (2026-03-14)
 
