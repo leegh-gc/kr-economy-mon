@@ -46,4 +46,66 @@ class GeminiApiServiceTest {
         String extracted = service.extractTextFromResponse("{ invalid json }");
         assertThat(extracted).isEmpty();
     }
+
+    @Test
+    void buildImageRequestBody_contains_responseModalities() {
+        String requestBody = service.buildImageRequestBody("컷툰 생성 프롬프트");
+
+        assertThat(requestBody).contains("컷툰 생성 프롬프트");
+        assertThat(requestBody).contains("responseModalities");
+        assertThat(requestBody).contains("IMAGE");
+    }
+
+    @Test
+    void extractImageFromResponse_parses_inline_data() {
+        String mockResponse = """
+            {
+              "candidates": [
+                {
+                  "content": {
+                    "parts": [
+                      {
+                        "inlineData": {
+                          "mimeType": "image/png",
+                          "data": "base64encodedimagedata=="
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+            """;
+
+        String extracted = service.extractImageFromResponse(mockResponse);
+
+        assertThat(extracted).isEqualTo("base64encodedimagedata==");
+    }
+
+    @Test
+    void extractImageFromResponse_returns_empty_when_no_image_part() {
+        String mockResponse = """
+            {
+              "candidates": [
+                {
+                  "content": {
+                    "parts": [
+                      { "text": "텍스트만 있음" }
+                    ]
+                  }
+                }
+              ]
+            }
+            """;
+
+        String extracted = service.extractImageFromResponse(mockResponse);
+
+        assertThat(extracted).isEmpty();
+    }
+
+    @Test
+    void extractImageFromResponse_returns_empty_on_malformed_json() {
+        String extracted = service.extractImageFromResponse("{ invalid }");
+        assertThat(extracted).isEmpty();
+    }
 }

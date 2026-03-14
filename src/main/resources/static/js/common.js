@@ -269,6 +269,40 @@ function loadEconomyAnalysis() {
         });
 }
 
+function loadEconomyCartoon() {
+    const container = document.getElementById('economy-cartoon-container');
+    if (!container) return;
+
+    container.innerHTML = `<div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div><span class="text-muted">AI 컷툰 생성 중...</span>`;
+
+    fetch('/krEconoMon/api/gemini/economy-cartoon')
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'ok' && data.imageData) {
+                container.innerHTML = `
+                    <img src="data:image/png;base64,${data.imageData}" alt="AI 경제 컷툰"
+                         class="img-fluid rounded" style="max-height: 400px;">
+                    <div class="mt-1"><small class="text-muted">${data.cached ? '(캐시된 컷툰)' : '(방금 생성된 컷툰)'}</small></div>
+                `;
+            } else {
+                container.innerHTML = `<p class="text-muted small">컷툰을 불러올 수 없습니다.</p>`;
+            }
+        })
+        .catch(() => {
+            container.innerHTML = `<p class="text-muted small">컷툰 생성에 실패했습니다.</p>`;
+        });
+}
+
+function refreshGeminiAnalysis() {
+    fetch('/krEconoMon/api/gemini/refresh', { method: 'POST' })
+        .then(res => res.json())
+        .then(() => {
+            loadEconomyAnalysis();
+            loadEconomyCartoon();
+        })
+        .catch(err => console.error('분석 새로고침 실패:', err));
+}
+
 function loadPopulationChart() {
     fetch('/krEconoMon/api/economy/population')
         .then(res => {
@@ -303,6 +337,7 @@ document.addEventListener('DOMContentLoaded', () => {
             loadLiquidityChart();
             loadPopulationChart();
             loadEconomyAnalysis();
+            loadEconomyCartoon();
         });
         if (economyTab.classList.contains('active')) {
             loadInterestRateChart();
@@ -314,6 +349,7 @@ document.addEventListener('DOMContentLoaded', () => {
             loadLiquidityChart();
             loadPopulationChart();
             loadEconomyAnalysis();
+            loadEconomyCartoon();
         }
     }
 });

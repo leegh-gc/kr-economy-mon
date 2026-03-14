@@ -26,6 +26,17 @@ app:
     model: gemini-2.0-flash
     timeout-seconds: 30
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when-authorized
+
 logging:
   level:
     com.example.kreconomonmon: INFO
+  file:
+    name: /var/log/kr-economy-mon/app.log

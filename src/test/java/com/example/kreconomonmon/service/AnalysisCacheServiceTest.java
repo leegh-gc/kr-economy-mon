@@ -83,6 +83,41 @@ class AnalysisCacheServiceTest {
     }
 
     @Test
+    void getCachedImage_returns_image_when_hash_matches() {
+        AnalysisCache cached = AnalysisCache.builder()
+            .cacheKey("ECONOMY_CARTOON")
+            .cacheType("ECONOMY_CARTOON")
+            .contentText("분석 텍스트")
+            .imageData("base64imagedata==")
+            .dataHash("matchinghash")
+            .createdAt(LocalDateTime.now())
+            .updatedAt(LocalDateTime.now())
+            .build();
+        when(repository.findById("ECONOMY_CARTOON")).thenReturn(Optional.of(cached));
+
+        String result = cacheService.getCachedImage("ECONOMY_CARTOON", "matchinghash");
+
+        assertThat(result).isEqualTo("base64imagedata==");
+    }
+
+    @Test
+    void getCachedImage_returns_null_when_hash_differs() {
+        AnalysisCache cached = AnalysisCache.builder()
+            .cacheKey("ECONOMY_CARTOON")
+            .cacheType("ECONOMY_CARTOON")
+            .imageData("oldimage==")
+            .dataHash("oldhash")
+            .createdAt(LocalDateTime.now())
+            .updatedAt(LocalDateTime.now())
+            .build();
+        when(repository.findById("ECONOMY_CARTOON")).thenReturn(Optional.of(cached));
+
+        String result = cacheService.getCachedImage("ECONOMY_CARTOON", "newhash");
+
+        assertThat(result).isNull();
+    }
+
+    @Test
     void saveCache_persists_new_entry() {
         when(repository.findById("ECONOMY_ANALYSIS")).thenReturn(Optional.empty());
         when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
@@ -108,5 +143,29 @@ class AnalysisCacheServiceTest {
 
         assertThat(existing.getContentText()).isEqualTo("새 분석");
         verify(repository, times(1)).save(existing);
+    }
+
+    @Test
+    void saveOrUpdate_stores_image_data() {
+        when(repository.findById("ECONOMY_CARTOON")).thenReturn(Optional.empty());
+        when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        cacheService.saveOrUpdate("ECONOMY_CARTOON", "ECONOMY_CARTOON", "분석 텍스트", "base64img==", "newhash");
+
+        verify(repository, times(1)).save(argThat(c ->
+            "base64img==".equals(c.getImageData()) && "ECONOMY_CARTOON".equals(c.getCacheKey())
+        ));
+    }
+
+    @Test
+    void invalidate_deletes_by_key() {
+        cacheService.invalidate("ECONOMY_ANALYSIS");
+        verify(repository, times(1)).deleteById("ECONOMY_ANALYSIS");
+    }
+
+    @Test
+    void invalidateAll_deletes_all() {
+        cacheService.invalidateAll();
+        verify(repository, times(1)).deleteAll();
     }
 }

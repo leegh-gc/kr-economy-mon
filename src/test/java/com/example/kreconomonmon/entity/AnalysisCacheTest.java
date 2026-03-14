@@ -34,9 +34,28 @@ class AnalysisCacheTest {
             .updatedAt(LocalDateTime.now())
             .build();
 
-        cache.updateContent("새로운 분석 텍스트", "newhash");
+        cache.updateContent("새로운 분석 텍스트", null, "newhash");
 
         assertThat(cache.getContentText()).isEqualTo("새로운 분석 텍스트");
+        assertThat(cache.getDataHash()).isEqualTo("newhash");
+    }
+
+    @Test
+    void updateContent_updates_text_and_image_data() {
+        AnalysisCache cache = AnalysisCache.builder()
+            .cacheKey("ECONOMY_CARTOON")
+            .cacheType("ECONOMY_CARTOON")
+            .contentText("이전 분석")
+            .imageData(null)
+            .dataHash("oldhash")
+            .createdAt(LocalDateTime.now())
+            .updatedAt(LocalDateTime.now())
+            .build();
+
+        cache.updateContent("새 분석", "base64imagedata==", "newhash");
+
+        assertThat(cache.getContentText()).isEqualTo("새 분석");
+        assertThat(cache.getImageData()).isEqualTo("base64imagedata==");
         assertThat(cache.getDataHash()).isEqualTo("newhash");
     }
 }

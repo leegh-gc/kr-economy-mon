@@ -1,11 +1,11 @@
 package com.example.kreconomonmon.controller;
 
+import com.example.kreconomonmon.dto.CartoonResponse;
+import com.example.kreconomonmon.service.AnalysisCacheService;
 import com.example.kreconomonmon.service.GeminiAnalysisService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -15,6 +15,7 @@ import java.util.Map;
 public class GeminiApiController {
 
     private final GeminiAnalysisService geminiAnalysisService;
+    private final AnalysisCacheService analysisCacheService;
 
     @GetMapping("/economy-analysis")
     public ResponseEntity<Map<String, Object>> getEconomyAnalysis() {
@@ -27,20 +28,30 @@ public class GeminiApiController {
     }
 
     @GetMapping("/economy-cartoon")
-    public ResponseEntity<Map<String, Object>> getEconomyCartoon() {
-        return ResponseEntity.ok(Map.of(
-            "status", "mock",
-            "imageUrl", "",
-            "message", "Gemini 컷툰 생성 연동 예정 (Sprint 5)"
-        ));
+    public ResponseEntity<CartoonResponse> getEconomyCartoon() {
+        Map<String, Object> result = geminiAnalysisService.getEconomyCartoon();
+        CartoonResponse response = new CartoonResponse(
+            (String) result.get("status"),
+            (String) result.get("imageData"),
+            Boolean.TRUE.equals(result.get("cached"))
+        );
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/realestate-cartoon")
-    public ResponseEntity<Map<String, Object>> getRealEstateCartoon() {
-        return ResponseEntity.ok(Map.of(
-            "status", "mock",
-            "imageUrl", "",
-            "message", "Gemini 컷툰 생성 연동 예정 (Sprint 5)"
-        ));
+    public ResponseEntity<CartoonResponse> getRealEstateCartoon() {
+        Map<String, Object> result = geminiAnalysisService.getRealEstateCartoon();
+        CartoonResponse response = new CartoonResponse(
+            (String) result.get("status"),
+            (String) result.get("imageData"),
+            Boolean.TRUE.equals(result.get("cached"))
+        );
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<Map<String, Object>> refreshAll() {
+        analysisCacheService.invalidateAll();
+        return ResponseEntity.ok(Map.of("status", "ok", "message", "캐시가 초기화되었습니다."));
     }
 }

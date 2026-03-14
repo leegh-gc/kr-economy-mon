@@ -2,6 +2,10 @@ server:
   port: 8086
   servlet:
     context-path: /krEconoMon
+  compression:
+    enabled: true
+    mime-types: application/json,application/javascript,text/css,text/html
+    min-response-size: 1024
 
 spring:
   application:

@@ -22,6 +22,9 @@ public class AnalysisCache {
     @Column(name = "content_text", columnDefinition = "TEXT")
     private String contentText;
 
+    @Column(name = "image_data", columnDefinition = "TEXT")
+    private String imageData;
+
     @Column(name = "data_hash", length = 64)
     private String dataHash;
 
@@ -31,9 +34,10 @@ public class AnalysisCache {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    public void updateContent(String newText, String newHash) {
-        this.contentText = newText;
-        this.dataHash = newHash;
+    public void updateContent(String contentText, String imageData, String dataHash) {
+        this.contentText = contentText;
+        this.imageData = imageData;
+        this.dataHash = dataHash;
         this.updatedAt = LocalDateTime.now();
     }
 }

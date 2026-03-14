@@ -31,6 +31,10 @@ public class AnalysisCacheService {
         }
     }
 
+    public Optional<AnalysisCache> findByKey(String cacheKey) {
+        return repository.findById(cacheKey);
+    }
+
     public String getCachedText(String cacheKey, String currentDataHash) {
         Optional<AnalysisCache> cached = repository.findById(cacheKey);
         if (cached.isEmpty()) {
@@ -47,11 +51,28 @@ public class AnalysisCacheService {
         return cache.getContentText();
     }
 
+    public String getCachedImage(String cacheKey, String currentDataHash) {
+        Optional<AnalysisCache> cached = repository.findById(cacheKey);
+        if (cached.isEmpty()) {
+            return null;
+        }
+        AnalysisCache cache = cached.get();
+        if (!currentDataHash.equals(cache.getDataHash())) {
+            return null;
+        }
+        return cache.getImageData();
+    }
+
     @Transactional
     public void saveCache(String cacheKey, String cacheType, String contentText, String dataHash) {
+        saveOrUpdate(cacheKey, cacheType, contentText, null, dataHash);
+    }
+
+    @Transactional
+    public void saveOrUpdate(String cacheKey, String cacheType, String contentText, String imageData, String dataHash) {
         Optional<AnalysisCache> existing = repository.findById(cacheKey);
         if (existing.isPresent()) {
-            existing.get().updateContent(contentText, dataHash);
+            existing.get().updateContent(contentText, imageData, dataHash);
             repository.save(existing.get());
             log.info("캐시 갱신: cacheKey={}", cacheKey);
         } else {
@@ -59,6 +80,7 @@ public class AnalysisCacheService {
                 .cacheKey(cacheKey)
                 .cacheType(cacheType)
                 .contentText(contentText)
+                .imageData(imageData)
                 .dataHash(dataHash)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
@@ -66,5 +88,17 @@ public class AnalysisCacheService {
             repository.save(newCache);
             log.info("캐시 신규 저장: cacheKey={}", cacheKey);
         }
+    }
+
+    @Transactional
+    public void invalidate(String cacheKey) {
+        repository.deleteById(cacheKey);
+        log.info("캐시 무효화: cacheKey={}", cacheKey);
+    }
+
+    @Transactional
+    public void invalidateAll() {
+        repository.deleteAll();
+        log.info("전체 캐시 무효화");
     }
 }

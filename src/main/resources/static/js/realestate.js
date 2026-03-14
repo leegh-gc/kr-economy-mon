@@ -106,6 +106,30 @@ function loadRealEstateAnalysis() {
         });
 }
 
+function loadRealEstateCartoon() {
+    const container = document.getElementById('realestate-cartoon-container');
+    if (!container) return;
+
+    container.innerHTML = `<div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div><span class="text-muted">AI 컷툰 생성 중...</span>`;
+
+    fetch('/krEconoMon/api/gemini/realestate-cartoon')
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'ok' && data.imageData) {
+                container.innerHTML = `
+                    <img src="data:image/png;base64,${data.imageData}" alt="AI 부동산 컷툰"
+                         class="img-fluid rounded" style="max-height: 400px;">
+                    <div class="mt-1"><small class="text-muted">${data.cached ? '(캐시된 컷툰)' : '(방금 생성된 컷툰)'}</small></div>
+                `;
+            } else {
+                container.innerHTML = `<p class="text-muted small">컷툰을 불러올 수 없습니다.</p>`;
+            }
+        })
+        .catch(() => {
+            container.innerHTML = `<p class="text-muted small">컷툰 생성에 실패했습니다.</p>`;
+        });
+}
+
 function loadRegionCharts(regionId, sigunguCodes) {
     const codesParam = sigunguCodes.join(',');
     const areaType = currentAreaType;
@@ -153,6 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
         loadKbIndexChart();
         loadRegionCharts('gangnam', REGION_CODES['gangnam']);
         loadRealEstateAnalysis();
+        loadRealEstateCartoon();
     }
 
     realEstateTab.addEventListener('shown.bs.tab', initRealEstateTab);

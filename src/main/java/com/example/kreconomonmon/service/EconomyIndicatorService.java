@@ -58,4 +58,22 @@ public class EconomyIndicatorService {
 
         return saved;
     }
+
+    /**
+     * 데이터 포인트가 maxPoints를 초과하면 균등 샘플링하여 반환.
+     * Chart.js 렌더링 성능 최적화용.
+     */
+    public List<EconomyIndicator> sampleIfNeeded(List<EconomyIndicator> data, int maxPoints) {
+        if (data.size() <= maxPoints) {
+            return data;
+        }
+        double step = (double) data.size() / maxPoints;
+        List<EconomyIndicator> sampled = new java.util.ArrayList<>();
+        for (int i = 0; i < maxPoints; i++) {
+            int index = (int) Math.round(i * step);
+            if (index >= data.size()) index = data.size() - 1;
+            sampled.add(data.get(index));
+        }
+        return sampled;
+    }
 }
