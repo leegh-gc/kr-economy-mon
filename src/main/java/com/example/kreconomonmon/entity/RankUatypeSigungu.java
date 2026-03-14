@@ -32,7 +32,7 @@ public class RankUatypeSigungu {
     @Column(name = "apt_name", length = 100)
     private String aptName;
 
-    @Column(name = "dong_name", length = 50)
+    @Column(name = "land_dong", length = 50)
     private String dongName;
 
     @Column(name = "build_year")
