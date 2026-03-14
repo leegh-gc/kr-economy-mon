@@ -11,7 +11,7 @@ spring:
   application:
     name: kr-economy-mon
   profiles:
-    active: local
+    active: prod
   thymeleaf:
     cache: false
     prefix: classpath:/templates/

@@ -23,7 +23,7 @@ app:
     base-url: https://ecos.bok.or.kr/api
   gemini:
     api-key: ${GEMINI_API_KEY}
-    model: gemini-2.0-flash
+    model: gemini-3-flash
     timeout-seconds: 30
 
 management:
