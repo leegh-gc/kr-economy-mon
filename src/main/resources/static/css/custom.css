@@ -1,0 +1,35 @@
+/* 탭 콘텐츠 최소 높이 */
+.tab-content .tab-pane {
+    min-height: 400px;
+}
+
+/* 차트 placeholder 스피너 */
+.chart-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+    background-color: #f8f9fa;
+    border-radius: 0.375rem;
+}
+
+/* 섹션 카드 */
+.section-card {
+    margin-bottom: 1.5rem;
+}
+
+/* Gemini 분석 영역 */
+.analysis-section {
+    background-color: #f8f9fa;
+    border-left: 4px solid #0d6efd;
+    padding: 1rem 1.5rem;
+    margin-top: 2rem;
+    border-radius: 0 0.375rem 0.375rem 0;
+}
+
+/* 에러 메시지 */
+.chart-error {
+    color: #dc3545;
+    text-align: center;
+    padding: 2rem;
+}

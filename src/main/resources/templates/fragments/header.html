@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org">
+<body>
+<header th:fragment="header" class="navbar navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand fw-bold" th:href="@{/}">
+            한국 경제 &amp; 서울 부동산 현황
+        </a>
+        <span class="navbar-text text-white-50 small"
+              id="lastUpdated">최종 업데이트: 로딩 중...</span>
+    </div>
+</header>
+</body>
+</html>

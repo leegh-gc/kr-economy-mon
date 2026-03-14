@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="economy-tab">
+
+    <div class="row g-3">
+
+        <!-- 섹션1: 금리 -->
+        <div class="col-12 col-lg-6 section-card">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0 fw-bold">금리</h6>
+                    <small class="text-muted">기준금리 · 국고채 3년 · 국고채 10년</small>
+                </div>
+                <div class="card-body p-2">
+                    <div id="chart-interest-rate" class="chart-placeholder">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">로딩 중...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 섹션2: GDP/성장률 -->
+        <div class="col-12 col-lg-6 section-card">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0 fw-bold">국민소득 / 성장률</h6>
+                    <small class="text-muted">GDP 성장률 · 1인당 GDP</small>
+                </div>
+                <div class="card-body p-2">
+                    <div id="chart-gdp" class="chart-placeholder">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">로딩 중...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 섹션3: 환율 -->
+        <div class="col-12 col-lg-6 section-card">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0 fw-bold">환율</h6>
+                    <small class="text-muted">USD · EUR · JPY(100엔) · CNY</small>
+                </div>
+                <div class="card-body p-2">
+                    <div id="chart-exchange-rate" class="chart-placeholder">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">로딩 중...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 섹션4: 물가 -->
+        <div class="col-12 col-lg-6 section-card">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0 fw-bold">물가</h6>
+                    <small class="text-muted">CPI · PPI</small>
+                </div>
+                <div class="card-body p-2">
+                    <div id="chart-price-index" class="chart-placeholder">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">로딩 중...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 섹션5: 무역/경상수지 -->
+        <div class="col-12 col-lg-6 section-card">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0 fw-bold">무역 / 경상수지</h6>
+                    <small class="text-muted">경상수지 · 수출 · 수입</small>
+                </div>
+                <div class="card-body p-2">
+                    <div id="chart-trade" class="chart-placeholder">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">로딩 중...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 섹션6: 고용/경기 -->
+        <div class="col-12 col-lg-6 section-card">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0 fw-bold">고용 / 경기</h6>
+                    <small class="text-muted">실업률 · 취업자수</small>
+                </div>
+                <div class="card-body p-2">
+                    <div id="chart-employment" class="chart-placeholder">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">로딩 중...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 섹션7: 통화/유동성 -->
+        <div class="col-12 col-lg-6 section-card">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0 fw-bold">통화 / 유동성</h6>
+                    <small class="text-muted">M2 · 외환보유액 (한국·일본·중국)</small>
+                </div>
+                <div class="card-body p-2">
+                    <div id="chart-liquidity" class="chart-placeholder">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">로딩 중...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 섹션8: 인구/출산율/고령화 -->
+        <div class="col-12 col-lg-6 section-card">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0 fw-bold">인구 / 출산율 / 고령화</h6>
+                    <small class="text-muted">추계인구 · 고령인구비율 · 합계출산율</small>
+                </div>
+                <div class="card-body p-2">
+                    <div id="chart-population" class="chart-placeholder">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">로딩 중...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- .row -->
+
+    <!-- Gemini 경제 분석 영역 placeholder -->
+    <div class="analysis-section mt-4" id="economy-analysis">
+        <h6 class="fw-bold mb-2">AI 경제 분석</h6>
+        <div id="economy-analysis-text" class="text-muted">
+            <div class="spinner-border spinner-border-sm text-primary me-2" role="status">
+                <span class="visually-hidden">분석 중...</span>
+            </div>
+            경제 데이터 로딩 후 AI 분석이 표시됩니다.
+        </div>
+    </div>
+
+</div><!-- th:fragment -->
+</body>
+</html>

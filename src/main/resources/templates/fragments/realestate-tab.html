@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="realestate-tab">
+
+    <!-- 최상단: KB 지수 차트 -->
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h6 class="mb-0 fw-bold">서울 아파트 KB 지수</h6>
+            <small class="text-muted">매매지수 · 전세지수 (최근 10년)</small>
+        </div>
+        <div class="card-body p-2">
+            <div id="chart-kb-index" class="chart-placeholder">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">로딩 중...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 면적 타입 선택 -->
+    <div class="d-flex align-items-center mb-3">
+        <label for="areaTypeSelect" class="form-label me-2 mb-0 fw-semibold">면적 타입:</label>
+        <select id="areaTypeSelect" class="form-select form-select-sm w-auto">
+            <option value="UA04" selected>UA04 - 전용 84&#13217;</option>
+            <option value="UA02">UA02 - 전용 59&#13217;</option>
+        </select>
+    </div>
+
+    <!-- 4개 권역 탭 -->
+    <ul class="nav nav-pills mb-3" id="regionTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="gangnam-tab"
+                    data-bs-toggle="pill" data-bs-target="#gangnam"
+                    type="button" role="tab"
+                    aria-controls="gangnam" aria-selected="true"
+                    data-region="gangnam"
+                    data-codes="11680,11650,11710"
+                    data-names="강남구,서초구,송파구">
+                강남권
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="gangdong-tab"
+                    data-bs-toggle="pill" data-bs-target="#gangdong"
+                    type="button" role="tab"
+                    aria-controls="gangdong" aria-selected="false"
+                    data-region="gangdong"
+                    data-codes="11740,11350,11200"
+                    data-names="강동구,노원구,성동구">
+                강동권
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="gangseo-tab"
+                    data-bs-toggle="pill" data-bs-target="#gangseo"
+                    type="button" role="tab"
+                    aria-controls="gangseo" aria-selected="false"
+                    data-region="gangseo"
+                    data-codes="11500,11560,11470"
+                    data-names="강서구,영등포구,양천구">
+                강서권
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="gangbuk-tab"
+                    data-bs-toggle="pill" data-bs-target="#gangbuk"
+                    type="button" role="tab"
+                    aria-controls="gangbuk" aria-selected="false"
+                    data-region="gangbuk"
+                    data-codes="11110,11440,11170"
+                    data-names="종로구,마포구,용산구">
+                강북권
+            </button>
+        </li>
+    </ul>
+
+    <!-- 권역별 콘텐츠 -->
+    <div class="tab-content" id="regionTabContent">
+
+        <!-- 강남권 -->
+        <div class="tab-pane fade show active" id="gangnam"
+             role="tabpanel" aria-labelledby="gangnam-tab">
+            <th:block th:replace="~{fragments/region-content :: region-content('gangnam', '강남권', '강남구,서초구,송파구')}"></th:block>
+        </div>
+
+        <!-- 강동권 -->
+        <div class="tab-pane fade" id="gangdong"
+             role="tabpanel" aria-labelledby="gangdong-tab">
+            <th:block th:replace="~{fragments/region-content :: region-content('gangdong', '강동권', '강동구,노원구,성동구')}"></th:block>
+        </div>
+
+        <!-- 강서권 -->
+        <div class="tab-pane fade" id="gangseo"
+             role="tabpanel" aria-labelledby="gangseo-tab">
+            <th:block th:replace="~{fragments/region-content :: region-content('gangseo', '강서권', '강서구,영등포구,양천구')}"></th:block>
+        </div>
+
+        <!-- 강북권 -->
+        <div class="tab-pane fade" id="gangbuk"
+             role="tabpanel" aria-labelledby="gangbuk-tab">
+            <th:block th:replace="~{fragments/region-content :: region-content('gangbuk', '강북권', '종로구,마포구,용산구')}"></th:block>
+        </div>
+
+    </div>
+
+    <!-- Gemini 부동산 분석 영역 placeholder -->
+    <div class="analysis-section mt-4" id="realestate-analysis">
+        <h6 class="fw-bold mb-2">AI 부동산 분석</h6>
+        <div id="realestate-analysis-text" class="text-muted">
+            <div class="spinner-border spinner-border-sm text-primary me-2" role="status">
+                <span class="visually-hidden">분석 중...</span>
+            </div>
+            부동산 데이터 로딩 후 AI 분석이 표시됩니다.
+        </div>
+    </div>
+
+</div><!-- th:fragment -->
+</body>
+</html>

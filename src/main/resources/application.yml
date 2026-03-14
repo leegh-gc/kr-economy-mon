@@ -1,0 +1,20 @@
+server:
+  port: 8086
+  servlet:
+    context-path: /krEconoMon
+
+spring:
+  application:
+    name: kr-economy-mon
+  profiles:
+    active: local
+  thymeleaf:
+    cache: false
+    prefix: classpath:/templates/
+    suffix: .html
+  jpa:
+    open-in-view: false
+
+logging:
+  level:
+    com.example.kreconomonmon: DEBUG

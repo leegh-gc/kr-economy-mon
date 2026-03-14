@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/default}">
+<head>
+    <title>대시보드</title>
+</head>
+<body>
+
+<div layout:fragment="content">
+    <!-- 탭 네비게이션 -->
+    <ul class="nav nav-tabs mb-3" id="mainTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="economy-tab"
+                    data-bs-toggle="tab" data-bs-target="#economy"
+                    type="button" role="tab"
+                    aria-controls="economy" aria-selected="true">
+                한국 경제 현황
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="realestate-tab"
+                    data-bs-toggle="tab" data-bs-target="#realestate"
+                    type="button" role="tab"
+                    aria-controls="realestate" aria-selected="false">
+                서울 부동산 현황
+            </button>
+        </li>
+    </ul>
+
+    <!-- 탭 콘텐츠 -->
+    <div class="tab-content" id="mainTabContent">
+        <!-- 탭1: 한국 경제 현황 -->
+        <div class="tab-pane fade show active" id="economy"
+             role="tabpanel" aria-labelledby="economy-tab">
+            <th:block th:replace="~{fragments/economy-tab :: economy-tab}"></th:block>
+        </div>
+
+        <!-- 탭2: 서울 부동산 현황 -->
+        <div class="tab-pane fade" id="realestate"
+             role="tabpanel" aria-labelledby="realestate-tab">
+            <th:block th:replace="~{fragments/realestate-tab :: realestate-tab}"></th:block>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
