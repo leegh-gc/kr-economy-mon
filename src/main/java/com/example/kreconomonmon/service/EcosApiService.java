@@ -30,6 +30,7 @@ public class EcosApiService {
 
     private final HttpClient httpClient = HttpClient.newBuilder()
             .connectTimeout(Duration.ofSeconds(10))
+            .followRedirects(HttpClient.Redirect.NORMAL)
             .build();
     private final ObjectMapper objectMapper = new ObjectMapper();
 

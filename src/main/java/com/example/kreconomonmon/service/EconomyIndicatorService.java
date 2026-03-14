@@ -65,15 +65,17 @@ public class EconomyIndicatorService {
     /**
      * ECOS API를 직접 호출하여 누락 데이터를 upsert한다.
      * 스케줄러가 매일 1회 호출 — DB 선조회 없이 항상 API 호출.
+     * @Transactional 없음: ECOS API 호출(최대 45초) 동안 DB 커넥션을 잡지 않기 위해.
      */
-    @Transactional
     public void refreshFromApi(String statCode, String cycle, String itemCode) {
+        // Phase 1: ECOS API 호출 (DB 커넥션 불필요)
         List<EcosApiResponse.Row> rows = ecosApiService.fetchStatistic(statCode, cycle, itemCode);
         if (rows.isEmpty()) {
             log.warn("ECOS API 데이터 없음: statCode={}, itemCode={}", statCode, itemCode);
             return;
         }
 
+        // Phase 2: DB upsert (각 save가 자체 트랜잭션 사용)
         Map<String, EconomyIndicator> existingByPeriod = repository
                 .findByStatCodeAndItemCodeOrderByPeriodAsc(statCode, itemCode)
                 .stream()
@@ -93,6 +95,7 @@ public class EconomyIndicatorService {
             EconomyIndicator existing = existingByPeriod.get(row.getTime());
             if (existing != null) {
                 existing.updateValue(value);
+                repository.save(existing);  // 명시적 save (detached 엔티티 merge)
                 updated++;
             } else {
                 repository.save(EconomyIndicator.builder()

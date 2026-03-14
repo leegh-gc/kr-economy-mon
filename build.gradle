@@ -70,3 +70,7 @@ clean {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+bootRun {
+    jvmArgs = ['-Djavax.net.ssl.trustStoreType=WINDOWS-ROOT']
+}
