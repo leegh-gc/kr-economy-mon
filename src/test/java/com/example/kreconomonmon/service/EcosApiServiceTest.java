@@ -24,7 +24,7 @@ class EcosApiServiceTest {
         String[] range = ecosApiService.buildDateRange("A");
 
         int currentYear = LocalDate.now().getYear();
-        assertThat(range[0]).isEqualTo(String.valueOf(currentYear - 10));
+        assertThat(range[0]).isEqualTo(String.valueOf(currentYear - 30));
         assertThat(range[1]).isEqualTo(String.valueOf(currentYear - 1));
     }
 

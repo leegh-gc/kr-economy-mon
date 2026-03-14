@@ -42,8 +42,8 @@ class RealEstateServiceTop5Test {
     @Test
     void getTop5Trade_returns_list_of_5_rows() {
         when(tradeTop5Repository
-            .findBySigunguCodeAndUseAreaTypeAndDealYearAndRankTypeOrderByAvgPriceDesc(
-                eq("11680"), eq("UA04"), anyString(), eq(0), any(Pageable.class)))
+            .findBySigunguCodeInAndUseAreaTypeAndDealYearAndRankTypeOrderByAvgPriceDesc(
+                eq(List.of("11680")), eq("UA04"), anyString(), eq(0), any(Pageable.class)))
             .thenReturn(List.of(
                 RankUatypeSigungu.builder()
                     .aptName("래미안").dongName("대치동").buildYear(2005)
@@ -54,7 +54,7 @@ class RealEstateServiceTop5Test {
                     .build()
             ));
 
-        List<Top5Response> result = realEstateService.getTop5Trade("11680", "UA04");
+        List<Top5Response> result = realEstateService.getTop5Trade(List.of("11680"), "UA04");
 
         assertThat(result).hasSize(1);
         assertThat(result.get(0).getAptName()).isEqualTo("래미안");
@@ -64,8 +64,8 @@ class RealEstateServiceTop5Test {
     @Test
     void getTop5Lease_returns_list_with_rent_gbn_zero() {
         when(leaseTop5Repository
-            .findBySigunguCodeAndUseAreaTypeAndDealYearAndRankTypeAndRentGbnOrderByAvgDepositDesc(
-                eq("11680"), eq("UA04"), anyString(), eq(0), eq("0"), any(Pageable.class)))
+            .findBySigunguCodeInAndUseAreaTypeAndDealYearAndRankTypeAndRentGbnOrderByAvgDepositDesc(
+                eq(List.of("11680")), eq("UA04"), anyString(), eq(0), eq("0"), any(Pageable.class)))
             .thenReturn(List.of(
                 RankUatypeSigunguLease.builder()
                     .aptName("은마").dongName("대치동").buildYear(1979)
@@ -76,7 +76,7 @@ class RealEstateServiceTop5Test {
                     .build()
             ));
 
-        List<Top5Response> result = realEstateService.getTop5Lease("11680", "UA04");
+        List<Top5Response> result = realEstateService.getTop5Lease(List.of("11680"), "UA04");
 
         assertThat(result).hasSize(1);
         assertThat(result.get(0).getAptName()).isEqualTo("은마");

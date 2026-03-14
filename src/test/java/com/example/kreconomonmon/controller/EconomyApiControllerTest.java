@@ -1,5 +1,6 @@
 package com.example.kreconomonmon.controller;
 
+import com.example.kreconomonmon.service.EconomyIndicatorScheduler;
 import com.example.kreconomonmon.service.EconomyIndicatorService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,9 @@ class EconomyApiControllerTest {
 
     @MockBean
     private EconomyIndicatorService economyIndicatorService;
+
+    @MockBean
+    private EconomyIndicatorScheduler economyIndicatorScheduler;
 
     @BeforeEach
     void setUp() {

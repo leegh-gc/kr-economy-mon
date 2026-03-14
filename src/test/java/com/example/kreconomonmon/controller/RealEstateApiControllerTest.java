@@ -76,7 +76,7 @@ class RealEstateApiControllerTest {
 
     @Test
     void getTop5Trade_returns_list_response() throws Exception {
-        when(realEstateService.getTop5Trade(eq("11680"), eq("UA04")))
+        when(realEstateService.getTop5Trade(eq(List.of("11680")), eq("UA04")))
             .thenReturn(List.of(
                 Top5Response.builder()
                     .aptName("래미안대치팰리스")
@@ -90,7 +90,7 @@ class RealEstateApiControllerTest {
             ));
 
         mockMvc.perform(get("/api/real-estate/top5/trade")
-                .param("sigunguCode", "11680")
+                .param("codes", "11680")
                 .param("areaType", "UA04"))
                .andExpect(status().isOk())
                .andExpect(jsonPath("$").isArray())
@@ -100,11 +100,11 @@ class RealEstateApiControllerTest {
 
     @Test
     void getTop5Lease_returns_list_response() throws Exception {
-        when(realEstateService.getTop5Lease(eq("11680"), eq("UA04")))
+        when(realEstateService.getTop5Lease(eq(List.of("11680")), eq("UA04")))
             .thenReturn(List.of());
 
         mockMvc.perform(get("/api/real-estate/top5/lease")
-                .param("sigunguCode", "11680")
+                .param("codes", "11680")
                 .param("areaType", "UA04"))
                .andExpect(status().isOk())
                .andExpect(jsonPath("$").isArray());

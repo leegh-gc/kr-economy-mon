@@ -30,13 +30,13 @@ class RankUatypeSigunguRepositoryTest {
                 .rankType(0).aptName("아파트B").avgPrice(new BigDecimal("50000")).dealCount(2).build()
         );
 
-        when(repository.findBySigunguCodeAndUseAreaTypeAndDealYearAndRankTypeOrderByAvgPriceDesc(
-            eq("11680"), eq("UA04"), eq("2026"), eq(0), any()))
+        when(repository.findBySigunguCodeInAndUseAreaTypeAndDealYearAndRankTypeOrderByAvgPriceDesc(
+            eq(List.of("11680")), eq("UA04"), eq("2026"), eq(0), any()))
             .thenReturn(mockData);
 
         List<RankUatypeSigungu> result = repository
-            .findBySigunguCodeAndUseAreaTypeAndDealYearAndRankTypeOrderByAvgPriceDesc(
-                "11680", "UA04", "2026", 0, PageRequest.of(0, 5));
+            .findBySigunguCodeInAndUseAreaTypeAndDealYearAndRankTypeOrderByAvgPriceDesc(
+                List.of("11680"), "UA04", "2026", 0, PageRequest.of(0, 5));
 
         assertThat(result).hasSize(2);
         assertThat(result.get(0).getAptName()).isEqualTo("아파트A");

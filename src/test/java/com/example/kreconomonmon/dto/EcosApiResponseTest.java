@@ -15,7 +15,7 @@ class EcosApiResponseTest {
             {
               "StatisticSearch": {
                 "list_total_count": 1,
-                "ROW": [
+                "row": [
                   {
                     "STAT_CODE": "722Y001",
                     "STAT_NAME": "기준금리",
