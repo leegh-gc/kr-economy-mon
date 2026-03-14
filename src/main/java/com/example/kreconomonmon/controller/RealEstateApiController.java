@@ -1,6 +1,7 @@
 package com.example.kreconomonmon.controller;
 
 import com.example.kreconomonmon.dto.ChartDataResponse;
+import com.example.kreconomonmon.dto.Top5Response;
 import com.example.kreconomonmon.entity.EconomyIndicator;
 import com.example.kreconomonmon.service.EconomyIndicatorService;
 import com.example.kreconomonmon.service.RealEstateService;
@@ -63,19 +64,17 @@ public class RealEstateApiController {
     }
 
     @GetMapping("/top5/trade")
-    public ResponseEntity<ChartDataResponse> getTop5Trade(
+    public ResponseEntity<List<Top5Response>> getTop5Trade(
             @RequestParam String sigunguCode,
             @RequestParam(defaultValue = "UA04") String areaType) {
-        return ResponseEntity.ok(ChartDataResponse.builder()
-            .labels(List.of()).datasets(List.of()).build());
+        return ResponseEntity.ok(realEstateService.getTop5Trade(sigunguCode, areaType));
     }
 
     @GetMapping("/top5/lease")
-    public ResponseEntity<ChartDataResponse> getTop5Lease(
+    public ResponseEntity<List<Top5Response>> getTop5Lease(
             @RequestParam String sigunguCode,
             @RequestParam(defaultValue = "UA04") String areaType) {
-        return ResponseEntity.ok(ChartDataResponse.builder()
-            .labels(List.of()).datasets(List.of()).build());
+        return ResponseEntity.ok(realEstateService.getTop5Lease(sigunguCode, areaType));
     }
 
     private ChartDataResponse.Dataset toDataset(

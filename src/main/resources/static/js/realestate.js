@@ -30,6 +30,82 @@ function loadKbIndexChart() {
         });
 }
 
+function buildTop5Table(rows, priceLabel) {
+    if (!rows || rows.length === 0) {
+        return '<p class="text-muted text-center py-3">데이터가 없습니다.</p>';
+    }
+    const header = `
+        <table class="table table-sm table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>아파트</th>
+              <th>동/연도</th>
+              <th>${priceLabel} (만원)</th>
+              <th>건수</th>
+            </tr>
+          </thead>
+          <tbody>`;
+    const rows_html = rows.map(r => `
+            <tr>
+              <td class="fw-semibold">${r.aptName || '-'}</td>
+              <td class="text-muted small">${r.dongName || '-'}<br>${r.buildYear || '-'}년</td>
+              <td>
+                <div class="text-danger small">최고 ${(r.maxPrice || 0).toLocaleString()}</div>
+                <div class="fw-bold">${(r.avgPrice || 0).toLocaleString()}</div>
+                <div class="text-primary small">최저 ${(r.minPrice || 0).toLocaleString()}</div>
+              </td>
+              <td>${r.dealCount || 0}건</td>
+            </tr>`).join('');
+    return header + rows_html + '</tbody></table>';
+}
+
+function loadTop5Tables(regionId, sigunguCodes) {
+    const areaType = currentAreaType;
+    const primaryCode = sigunguCodes[0];
+
+    const tradeEl = document.getElementById('table-top5-trade-' + regionId);
+    const leaseEl = document.getElementById('table-top5-lease-' + regionId);
+
+    if (tradeEl) {
+        tradeEl.innerHTML = KrEconoMon.loadingSpinner();
+        fetch(`/krEconoMon/api/real-estate/top5/trade?sigunguCode=${primaryCode}&areaType=${areaType}`)
+            .then(res => res.json())
+            .then(rows => { tradeEl.innerHTML = buildTop5Table(rows, '매매가'); })
+            .catch(() => { tradeEl.innerHTML = KrEconoMon.errorMessage('TOP5 데이터를 불러올 수 없습니다.'); });
+    }
+
+    if (leaseEl) {
+        leaseEl.innerHTML = KrEconoMon.loadingSpinner();
+        fetch(`/krEconoMon/api/real-estate/top5/lease?sigunguCode=${primaryCode}&areaType=${areaType}`)
+            .then(res => res.json())
+            .then(rows => { leaseEl.innerHTML = buildTop5Table(rows, '전세가'); })
+            .catch(() => { leaseEl.innerHTML = KrEconoMon.errorMessage('TOP5 데이터를 불러올 수 없습니다.'); });
+    }
+}
+
+function loadRealEstateAnalysis() {
+    const container = document.getElementById('realestate-analysis-text');
+    if (!container) return;
+
+    container.innerHTML = `<div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div> 분석 중...`;
+
+    fetch('/krEconoMon/api/gemini/realestate-analysis')
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'ok' && data.text) {
+                container.innerHTML = `
+                    <p class="mb-1">${data.text.replace(/\n/g, '<br>')}</p>
+                    <small class="text-muted">${data.cached ? '(캐시된 분석)' : '(방금 생성된 분석)'}</small>
+                `;
+            } else {
+                container.innerHTML = KrEconoMon.errorMessage('AI 분석을 불러올 수 없습니다.');
+            }
+        })
+        .catch(() => {
+            container.innerHTML = KrEconoMon.errorMessage('AI 분석 연결에 실패했습니다.');
+        });
+}
+
 function loadRegionCharts(regionId, sigunguCodes) {
     const codesParam = sigunguCodes.join(',');
     const areaType = currentAreaType;
@@ -65,6 +141,8 @@ function loadRegionCharts(regionId, sigunguCodes) {
             if (leaseContainer) leaseContainer.innerHTML = KrEconoMon.errorMessage();
             console.error('전세가 차트 로드 실패:', err);
         });
+
+    loadTop5Tables(regionId, sigunguCodes);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -74,6 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function initRealEstateTab() {
         loadKbIndexChart();
         loadRegionCharts('gangnam', REGION_CODES['gangnam']);
+        loadRealEstateAnalysis();
     }
 
     realEstateTab.addEventListener('shown.bs.tab', initRealEstateTab);

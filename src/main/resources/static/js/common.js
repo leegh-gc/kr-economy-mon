@@ -246,6 +246,29 @@ function loadLiquidityChart() {
         .catch(err => console.error('통화 데이터 로드 실패:', err));
 }
 
+function loadEconomyAnalysis() {
+    const container = document.getElementById('economy-analysis-text');
+    if (!container) return;
+
+    container.innerHTML = `<div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div> 분석 중...`;
+
+    fetch('/krEconoMon/api/gemini/economy-analysis')
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'ok' && data.text) {
+                container.innerHTML = `
+                    <p class="mb-1">${data.text.replace(/\n/g, '<br>')}</p>
+                    <small class="text-muted">${data.cached ? '(캐시된 분석)' : '(방금 생성된 분석)'}</small>
+                `;
+            } else {
+                container.innerHTML = KrEconoMon.errorMessage('AI 분석을 불러올 수 없습니다.');
+            }
+        })
+        .catch(() => {
+            container.innerHTML = KrEconoMon.errorMessage('AI 분석 연결에 실패했습니다.');
+        });
+}
+
 function loadPopulationChart() {
     fetch('/krEconoMon/api/economy/population')
         .then(res => {
@@ -279,6 +302,7 @@ document.addEventListener('DOMContentLoaded', () => {
             loadEmploymentChart();
             loadLiquidityChart();
             loadPopulationChart();
+            loadEconomyAnalysis();
         });
         if (economyTab.classList.contains('active')) {
             loadInterestRateChart();
@@ -289,6 +313,7 @@ document.addEventListener('DOMContentLoaded', () => {
             loadEmploymentChart();
             loadLiquidityChart();
             loadPopulationChart();
+            loadEconomyAnalysis();
         }
     }
 });

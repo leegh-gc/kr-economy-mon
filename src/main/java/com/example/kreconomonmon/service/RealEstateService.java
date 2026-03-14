@@ -1,13 +1,20 @@
 package com.example.kreconomonmon.service;
 
 import com.example.kreconomonmon.dto.ChartDataResponse;
+import com.example.kreconomonmon.dto.Top5Response;
+import com.example.kreconomonmon.entity.RankUatypeSigungu;
+import com.example.kreconomonmon.entity.RankUatypeSigunguLease;
 import com.example.kreconomonmon.entity.StatLeaseSigungu;
 import com.example.kreconomonmon.entity.StatSigunguYymm;
+import com.example.kreconomonmon.repository.RankUatypeSigunguLeaseRepository;
+import com.example.kreconomonmon.repository.RankUatypeSigunguRepository;
 import com.example.kreconomonmon.repository.StatLeaseSigunguRepository;
 import com.example.kreconomonmon.repository.StatSigunguYymmRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -17,6 +24,8 @@ public class RealEstateService {
 
     private final StatSigunguYymmRepository tradeRepository;
     private final StatLeaseSigunguRepository leaseRepository;
+    private final RankUatypeSigunguRepository tradeTop5Repository;
+    private final RankUatypeSigunguLeaseRepository leaseTop5Repository;
 
     private static final Map<String, String> DISTRICT_NAMES;
     static {
@@ -100,5 +109,43 @@ public class RealEstateService {
         }
 
         return ChartDataResponse.builder().labels(labels).datasets(datasets).build();
+    }
+
+    public List<Top5Response> getTop5Trade(String sigunguCode, String useAreaType) {
+        String currentYear = String.valueOf(LocalDate.now().getYear());
+        List<RankUatypeSigungu> rows = tradeTop5Repository
+            .findBySigunguCodeAndUseAreaTypeAndDealYearAndRankTypeOrderByAvgPriceDesc(
+                sigunguCode, useAreaType, currentYear, 0, PageRequest.of(0, 5));
+
+        return rows.stream()
+            .map(r -> Top5Response.builder()
+                .aptName(r.getAptName())
+                .dongName(r.getDongName())
+                .buildYear(r.getBuildYear())
+                .avgPrice(r.getAvgPrice())
+                .minPrice(r.getMinPrice())
+                .maxPrice(r.getMaxPrice())
+                .dealCount(r.getDealCount())
+                .build())
+            .toList();
+    }
+
+    public List<Top5Response> getTop5Lease(String sigunguCode, String useAreaType) {
+        String currentYear = String.valueOf(LocalDate.now().getYear());
+        List<RankUatypeSigunguLease> rows = leaseTop5Repository
+            .findBySigunguCodeAndUseAreaTypeAndDealYearAndRankTypeAndRentGbnOrderByAvgDepositDesc(
+                sigunguCode, useAreaType, currentYear, 0, "0", PageRequest.of(0, 5));
+
+        return rows.stream()
+            .map(r -> Top5Response.builder()
+                .aptName(r.getAptName())
+                .dongName(r.getDongName())
+                .buildYear(r.getBuildYear())
+                .avgPrice(r.getAvgDeposit())
+                .minPrice(r.getMinDeposit())
+                .maxPrice(r.getMaxDeposit())
+                .dealCount(r.getDealCount())
+                .build())
+            .toList();
     }
 }

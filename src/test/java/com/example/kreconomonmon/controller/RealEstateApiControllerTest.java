@@ -1,6 +1,7 @@
 package com.example.kreconomonmon.controller;
 
 import com.example.kreconomonmon.dto.ChartDataResponse;
+import com.example.kreconomonmon.dto.Top5Response;
 import com.example.kreconomonmon.service.EconomyIndicatorService;
 import com.example.kreconomonmon.service.RealEstateService;
 import org.junit.jupiter.api.Test;
@@ -9,9 +10,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -69,5 +72,41 @@ class RealEstateApiControllerTest {
                 .param("codes", "11680,11650,11710"))
                .andExpect(status().isOk())
                .andExpect(jsonPath("$.labels").isArray());
+    }
+
+    @Test
+    void getTop5Trade_returns_list_response() throws Exception {
+        when(realEstateService.getTop5Trade(eq("11680"), eq("UA04")))
+            .thenReturn(List.of(
+                Top5Response.builder()
+                    .aptName("래미안대치팰리스")
+                    .dongName("대치동")
+                    .buildYear(2002)
+                    .avgPrice(new BigDecimal("250000"))
+                    .minPrice(new BigDecimal("220000"))
+                    .maxPrice(new BigDecimal("280000"))
+                    .dealCount(5)
+                    .build()
+            ));
+
+        mockMvc.perform(get("/api/real-estate/top5/trade")
+                .param("sigunguCode", "11680")
+                .param("areaType", "UA04"))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$").isArray())
+               .andExpect(jsonPath("$[0].aptName").value("래미안대치팰리스"))
+               .andExpect(jsonPath("$[0].dealCount").value(5));
+    }
+
+    @Test
+    void getTop5Lease_returns_list_response() throws Exception {
+        when(realEstateService.getTop5Lease(eq("11680"), eq("UA04")))
+            .thenReturn(List.of());
+
+        mockMvc.perform(get("/api/real-estate/top5/lease")
+                .param("sigunguCode", "11680")
+                .param("areaType", "UA04"))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$").isArray());
     }
 }
