@@ -23,7 +23,7 @@ public class EcosApiResponse {
         @JsonProperty("list_total_count")
         private int listTotalCount;
 
-        @JsonProperty("ROW")
+        @JsonProperty("row")
         private List<Row> rows;
     }
 
