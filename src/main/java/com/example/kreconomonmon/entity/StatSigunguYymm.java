@@ -14,7 +14,8 @@ public class StatSigunguYymm {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "seq")
+    private Long seq;
 
     @Column(name = "sigungu_code", nullable = false, length = 10)
     private String sigunguCode;
