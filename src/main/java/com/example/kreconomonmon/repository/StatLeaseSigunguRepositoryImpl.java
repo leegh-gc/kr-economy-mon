@@ -3,15 +3,18 @@ package com.example.kreconomonmon.repository;
 import com.example.kreconomonmon.entity.QStatLeaseSigungu;
 import com.example.kreconomonmon.entity.StatLeaseSigungu;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import lombok.RequiredArgsConstructor;
+import jakarta.persistence.EntityManager;
 
 import java.time.LocalDate;
 import java.util.List;
 
-@RequiredArgsConstructor
 public class StatLeaseSigunguRepositoryImpl implements StatLeaseSigunguRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
+
+    public StatLeaseSigunguRepositoryImpl(EntityManager em) {
+        this.queryFactory = new JPAQueryFactory(em);
+    }
 
     @Override
     public List<StatLeaseSigungu> findByCodesAndAreaType(List<String> sigunguCodes, String useAreaType) {
