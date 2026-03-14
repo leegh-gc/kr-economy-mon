@@ -341,13 +341,22 @@ function loadPopulationChart() {
                 data.datasets[1].backgroundColor = 'rgba(253, 126, 20, 0.5)';
                 data.datasets[1].borderColor = '#fd7e14';
             }
+            // 합계출산율(index=2)을 전용 y2 축으로 분리해 등락이 잘 보이게
+            if (data.datasets && data.datasets[2]) {
+                data.datasets[2].yAxisID = 'y2';
+            }
             const options = {
                 scales: {
                     y:  { type: 'linear', display: true, position: 'left',
                           title: { display: true, text: '총인구 (천명)' } },
                     y1: { type: 'linear', display: true, position: 'right',
-                          title: { display: true, text: '고령비율(%) / 출산율' },
-                          grid: { drawOnChartArea: false } }
+                          title: { display: true, text: '고령인구비율 (%)' },
+                          grid: { drawOnChartArea: false } },
+                    y2: { type: 'linear', display: true, position: 'right',
+                          title: { display: true, text: '합계출산율' },
+                          min: 0, max: 2.5,
+                          grid: { drawOnChartArea: false },
+                          ticks: { color: '#28a745' } }
                 }
             };
             createLineChart('populationChart', data, options);
