@@ -52,8 +52,6 @@ class EconomyIndicatorServiceTest {
         EcosApiResponse.Row row = mock(EcosApiResponse.Row.class);
         when(row.getTime()).thenReturn("202301");
         when(row.getDataValue()).thenReturn("3.5");
-        when(row.getStatCode()).thenReturn("722Y001");
-        when(row.getItemCode1()).thenReturn("0101000");
         when(ecosApiService.fetchStatistic("722Y001", "M", "0101000"))
                 .thenReturn(List.of(row));
 
