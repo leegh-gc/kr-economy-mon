@@ -351,6 +351,7 @@ function loadPopulationChart() {
                           title: { display: true, text: '총인구 (천명)' } },
                     y1: { type: 'linear', display: true, position: 'right',
                           title: { display: true, text: '고령인구비율 (%)' },
+                          min: 0, max: 30,
                           grid: { drawOnChartArea: false } },
                     y2: { type: 'linear', display: true, position: 'right',
                           title: { display: true, text: '합계출산율' },

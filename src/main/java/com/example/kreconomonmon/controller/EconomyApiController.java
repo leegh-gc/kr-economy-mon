@@ -217,8 +217,6 @@ public class EconomyApiController {
                 economyIndicatorService.getIndicators("902Y014", "M", "KR");
         List<EconomyIndicator> reserveJp =
                 economyIndicatorService.getIndicators("902Y014", "M", "JP");
-        List<EconomyIndicator> reserveCn =
-                economyIndicatorService.getIndicators("902Y014", "M", "CN");
 
         List<String> labels = reserveKr.stream()
                 .map(EconomyIndicator::getPeriod)
@@ -228,8 +226,7 @@ public class EconomyApiController {
                 .labels(labels)
                 .datasets(List.of(
                         toDataset(reserveKr, "한국 (억달러)", "#007bff", null),
-                        toDataset(reserveJp, "일본 (억달러)", "#fd7e14", null),
-                        toDataset(reserveCn, "중국 (억달러)", "#dc3545", null)
+                        toDataset(reserveJp, "일본 (억달러)", "#fd7e14", null)
                 ))
                 .build();
 
