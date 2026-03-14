@@ -44,9 +44,11 @@ public class EcosApiService {
      */
     public List<EcosApiResponse.Row> fetchStatistic(String statCode, String cycle, String itemCode1) {
         String[] range = buildDateRange(cycle);
-        String startDate = range[0];
-        String endDate = range[1];
+        return fetchStatistic(statCode, cycle, itemCode1, range[0], range[1]);
+    }
 
+    public List<EcosApiResponse.Row> fetchStatistic(String statCode, String cycle, String itemCode1,
+                                                     String startDate, String endDate) {
         String url = String.format(
                 "%s/StatisticSearch/%s/json/kr/1/%d/%s/%s/%s/%s/%s",
                 baseUrl, apiKey, MAX_ROWS, statCode, cycle, startDate, endDate, itemCode1
@@ -96,7 +98,7 @@ public class EcosApiService {
 
         return switch (cycle.toUpperCase()) {
             case "A" -> new String[]{
-                    String.valueOf(currentYear - 10),
+                    String.valueOf(currentYear - 30),
                     String.valueOf(currentYear - 1)
             };
             case "Q" -> new String[]{

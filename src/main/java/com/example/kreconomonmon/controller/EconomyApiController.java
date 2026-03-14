@@ -100,12 +100,8 @@ public class EconomyApiController {
     public ResponseEntity<ChartDataResponse> getExchangeRate() {
         List<EconomyIndicator> usd =
                 economyIndicatorService.getIndicators("731Y001", "D", "0000001");
-        List<EconomyIndicator> eur =
-                economyIndicatorService.getIndicators("731Y001", "D", "0000003");
         List<EconomyIndicator> jpy =
                 economyIndicatorService.getIndicators("731Y001", "D", "0000002");
-        List<EconomyIndicator> cny =
-                economyIndicatorService.getIndicators("731Y001", "D", "0000053");
 
         List<String> labels = usd.stream()
                 .map(EconomyIndicator::getPeriod)
@@ -115,9 +111,7 @@ public class EconomyApiController {
                 .labels(labels)
                 .datasets(List.of(
                         toDataset(usd, "USD (원)", "#007bff", "y"),
-                        toDataset(eur, "EUR (원)", "#fd7e14", "y"),
-                        toDataset(jpy, "JPY 100엔 (원)", "#dc3545", "y1"),
-                        toDataset(cny, "CNY (원)", "#28a745", "y")
+                        toDataset(jpy, "JPY 100엔 (원)", "#dc3545", "y1")
                 ))
                 .build();
 

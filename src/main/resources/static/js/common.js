@@ -180,7 +180,7 @@ function loadExchangeRateChart() {
                 scales: {
                     y: {
                         type: 'linear', display: true, position: 'left',
-                        title: { display: true, text: 'USD/EUR/CNY (원)' }
+                        title: { display: true, text: 'USD (원)' }
                     },
                     y1: {
                         type: 'linear', display: true, position: 'right',
@@ -335,6 +335,12 @@ function loadPopulationChart() {
             return res.json();
         })
         .then(data => {
+            // 고령인구비율(index=1)을 막대로 변경
+            if (data.datasets && data.datasets[1]) {
+                data.datasets[1].type = 'bar';
+                data.datasets[1].backgroundColor = 'rgba(253, 126, 20, 0.5)';
+                data.datasets[1].borderColor = '#fd7e14';
+            }
             const options = {
                 scales: {
                     y:  { type: 'linear', display: true, position: 'left',
