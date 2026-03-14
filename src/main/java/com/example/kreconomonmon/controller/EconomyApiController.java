@@ -215,8 +215,6 @@ public class EconomyApiController {
     public ResponseEntity<ChartDataResponse> getForexReserve() {
         List<EconomyIndicator> reserveKr =
                 economyIndicatorService.getIndicators("902Y014", "M", "KR");
-        List<EconomyIndicator> reserveJp =
-                economyIndicatorService.getIndicators("902Y014", "M", "JP");
 
         List<String> labels = reserveKr.stream()
                 .map(EconomyIndicator::getPeriod)
@@ -225,8 +223,7 @@ public class EconomyApiController {
         ChartDataResponse response = ChartDataResponse.builder()
                 .labels(labels)
                 .datasets(List.of(
-                        toDataset(reserveKr, "한국 (억달러)", "#007bff", null),
-                        toDataset(reserveJp, "일본 (억달러)", "#fd7e14", null)
+                        toDataset(reserveKr, "한국 (억달러)", "#007bff", null)
                 ))
                 .build();
 
