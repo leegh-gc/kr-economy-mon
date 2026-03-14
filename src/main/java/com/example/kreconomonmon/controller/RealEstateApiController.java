@@ -1,68 +1,91 @@
 package com.example.kreconomonmon.controller;
 
+import com.example.kreconomonmon.dto.ChartDataResponse;
+import com.example.kreconomonmon.entity.EconomyIndicator;
+import com.example.kreconomonmon.service.EconomyIndicatorService;
+import com.example.kreconomonmon.service.RealEstateService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/real-estate")
+@RequiredArgsConstructor
 public class RealEstateApiController {
 
+    private final RealEstateService realEstateService;
+    private final EconomyIndicatorService economyIndicatorService;
+
     @GetMapping("/kb-index")
-    public ResponseEntity<Map<String, Object>> getKbIndex() {
-        // Phase 3에서 ECOS API + DB 연동으로 교체 예정
-        return ResponseEntity.ok(Map.of(
-            "status", "mock",
-            "message", "KB 지수 연동 예정 (Phase 3)"
-        ));
+    public ResponseEntity<ChartDataResponse> getKbIndex() {
+        List<EconomyIndicator> tradeIdx =
+            economyIndicatorService.getIndicators("901Y062", "M", "P63ACA");
+        List<EconomyIndicator> leaseIdx =
+            economyIndicatorService.getIndicators("901Y063", "M", "P64ACA");
+
+        List<String> labels = tradeIdx.stream()
+            .map(EconomyIndicator::getPeriod)
+            .collect(Collectors.toList());
+
+        ChartDataResponse response = ChartDataResponse.builder()
+            .labels(labels)
+            .datasets(List.of(
+                toDataset(tradeIdx, "KB 매매지수", "#007bff"),
+                toDataset(leaseIdx, "KB 전세지수", "#28a745")
+            ))
+            .build();
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/price")
-    public ResponseEntity<Map<String, Object>> getPrice(
+    public ResponseEntity<ChartDataResponse> getPrice(
             @RequestParam String region,
-            @RequestParam(defaultValue = "UA04") String areaType) {
-        return ResponseEntity.ok(Map.of(
-            "status", "mock",
-            "region", region,
-            "areaType", areaType,
-            "message", "DB 연동 예정 (Phase 3)"
-        ));
+            @RequestParam(defaultValue = "UA04") String areaType,
+            @RequestParam String codes) {
+
+        List<String> sigunguCodes = Arrays.asList(codes.split(","));
+        return ResponseEntity.ok(realEstateService.getPriceChartData(sigunguCodes, areaType));
     }
 
     @GetMapping("/lease")
-    public ResponseEntity<Map<String, Object>> getLease(
+    public ResponseEntity<ChartDataResponse> getLease(
             @RequestParam String region,
-            @RequestParam(defaultValue = "UA04") String areaType) {
-        return ResponseEntity.ok(Map.of(
-            "status", "mock",
-            "region", region,
-            "areaType", areaType,
-            "message", "DB 연동 예정 (Phase 3)"
-        ));
+            @RequestParam(defaultValue = "UA04") String areaType,
+            @RequestParam String codes) {
+
+        List<String> sigunguCodes = Arrays.asList(codes.split(","));
+        return ResponseEntity.ok(realEstateService.getLeaseChartData(sigunguCodes, areaType));
     }
 
     @GetMapping("/top5/trade")
-    public ResponseEntity<Map<String, Object>> getTop5Trade(
+    public ResponseEntity<ChartDataResponse> getTop5Trade(
             @RequestParam String sigunguCode,
             @RequestParam(defaultValue = "UA04") String areaType) {
-        return ResponseEntity.ok(Map.of(
-            "status", "mock",
-            "sigunguCode", sigunguCode,
-            "areaType", areaType,
-            "message", "DB 연동 예정 (Phase 3)"
-        ));
+        return ResponseEntity.ok(ChartDataResponse.builder()
+            .labels(List.of()).datasets(List.of()).build());
     }
 
     @GetMapping("/top5/lease")
-    public ResponseEntity<Map<String, Object>> getTop5Lease(
+    public ResponseEntity<ChartDataResponse> getTop5Lease(
             @RequestParam String sigunguCode,
             @RequestParam(defaultValue = "UA04") String areaType) {
-        return ResponseEntity.ok(Map.of(
-            "status", "mock",
-            "sigunguCode", sigunguCode,
-            "areaType", areaType,
-            "message", "DB 연동 예정 (Phase 3)"
-        ));
+        return ResponseEntity.ok(ChartDataResponse.builder()
+            .labels(List.of()).datasets(List.of()).build());
+    }
+
+    private ChartDataResponse.Dataset toDataset(
+            List<EconomyIndicator> indicators, String label, String color) {
+        List<Double> data = indicators.stream()
+            .map(e -> e.getValue() != null ? e.getValue().doubleValue() : null)
+            .collect(Collectors.toList());
+        return ChartDataResponse.Dataset.builder()
+            .label(label).data(data)
+            .borderColor(color).backgroundColor(color)
+            .fill(false).build();
     }
 }
