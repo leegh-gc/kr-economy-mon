@@ -178,6 +178,95 @@ function loadPriceIndexChart() {
         .catch(err => console.error('물가 데이터 로드 실패:', err));
 }
 
+function loadTradeChart() {
+    fetch('/krEconoMon/api/economy/trade')
+        .then(res => {
+            if (!res.ok) throw new Error('무역 데이터 로드 실패: ' + res.status);
+            return res.json();
+        })
+        .then(data => {
+            const currentAccountDataset = { ...data.datasets[0], type: 'bar' };
+            const tradeData = {
+                labels: data.labels,
+                datasets: [currentAccountDataset, data.datasets[1], data.datasets[2]]
+            };
+            const options = {
+                scales: {
+                    y:  { type: 'linear', display: true, position: 'left',
+                          title: { display: true, text: '경상수지 (백만달러)' } },
+                    y1: { type: 'linear', display: true, position: 'right',
+                          title: { display: true, text: '수출/수입 (백만달러)' },
+                          grid: { drawOnChartArea: false } }
+                }
+            };
+            createLineChart('tradeChart', tradeData, options);
+        })
+        .catch(err => console.error('무역 데이터 로드 실패:', err));
+}
+
+function loadEmploymentChart() {
+    fetch('/krEconoMon/api/economy/employment')
+        .then(res => {
+            if (!res.ok) throw new Error('고용 데이터 로드 실패: ' + res.status);
+            return res.json();
+        })
+        .then(data => {
+            const options = {
+                scales: {
+                    y:  { type: 'linear', display: true, position: 'left',
+                          title: { display: true, text: '실업률 (%)' } },
+                    y1: { type: 'linear', display: true, position: 'right',
+                          title: { display: true, text: '취업자수 (천명)' },
+                          grid: { drawOnChartArea: false } }
+                }
+            };
+            createLineChart('employmentChart', data, options);
+        })
+        .catch(err => console.error('고용 데이터 로드 실패:', err));
+}
+
+function loadLiquidityChart() {
+    fetch('/krEconoMon/api/economy/liquidity')
+        .then(res => {
+            if (!res.ok) throw new Error('통화 데이터 로드 실패: ' + res.status);
+            return res.json();
+        })
+        .then(data => {
+            const options = {
+                scales: {
+                    y:  { type: 'linear', display: true, position: 'left',
+                          title: { display: true, text: 'M2 (조원)' } },
+                    y1: { type: 'linear', display: true, position: 'right',
+                          title: { display: true, text: '외환보유액 (억달러)' },
+                          grid: { drawOnChartArea: false } }
+                }
+            };
+            createLineChart('liquidityChart', data, options);
+        })
+        .catch(err => console.error('통화 데이터 로드 실패:', err));
+}
+
+function loadPopulationChart() {
+    fetch('/krEconoMon/api/economy/population')
+        .then(res => {
+            if (!res.ok) throw new Error('인구 데이터 로드 실패: ' + res.status);
+            return res.json();
+        })
+        .then(data => {
+            const options = {
+                scales: {
+                    y:  { type: 'linear', display: true, position: 'left',
+                          title: { display: true, text: '인구 (천명)' } },
+                    y1: { type: 'linear', display: true, position: 'right',
+                          title: { display: true, text: '비율 / 출산율' },
+                          grid: { drawOnChartArea: false } }
+                }
+            };
+            createLineChart('populationChart', data, options);
+        })
+        .catch(err => console.error('인구 데이터 로드 실패:', err));
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const economyTab = document.getElementById('economy-tab');
     if (economyTab) {
@@ -186,12 +275,20 @@ document.addEventListener('DOMContentLoaded', () => {
             loadGdpChart();
             loadExchangeRateChart();
             loadPriceIndexChart();
+            loadTradeChart();
+            loadEmploymentChart();
+            loadLiquidityChart();
+            loadPopulationChart();
         });
         if (economyTab.classList.contains('active')) {
             loadInterestRateChart();
             loadGdpChart();
             loadExchangeRateChart();
             loadPriceIndexChart();
+            loadTradeChart();
+            loadEmploymentChart();
+            loadLiquidityChart();
+            loadPopulationChart();
         }
     }
 });

@@ -41,4 +41,36 @@ class EconomyApiControllerTest {
         mockMvc.perform(get("/api/economy/gdp"))
                .andExpect(status().isOk());
     }
+
+    @Test
+    void getTrade_returnsChartDataResponse() throws Exception {
+        mockMvc.perform(get("/api/economy/trade"))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$.labels").isArray())
+               .andExpect(jsonPath("$.datasets").isArray());
+    }
+
+    @Test
+    void getEmployment_returnsChartDataResponse() throws Exception {
+        mockMvc.perform(get("/api/economy/employment"))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$.labels").isArray())
+               .andExpect(jsonPath("$.datasets").isArray());
+    }
+
+    @Test
+    void getLiquidity_returnsChartDataResponse() throws Exception {
+        mockMvc.perform(get("/api/economy/liquidity"))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$.labels").isArray())
+               .andExpect(jsonPath("$.datasets").isArray());
+    }
+
+    @Test
+    void getPopulation_returnsChartDataResponse() throws Exception {
+        mockMvc.perform(get("/api/economy/population"))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$.labels").isArray())
+               .andExpect(jsonPath("$.datasets").isArray());
+    }
 }

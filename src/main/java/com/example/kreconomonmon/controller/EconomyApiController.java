@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -121,25 +120,113 @@ public class EconomyApiController {
         return ResponseEntity.ok(response);
     }
 
-    // ── 나머지 엔드포인트 (Sprint 3 구현 예정, mock 유지) ──
+    // ── 섹션5: 무역/경상수지 ────────────────────────────────
     @GetMapping("/trade")
-    public ResponseEntity<Map<String, Object>> getTrade() {
-        return ResponseEntity.ok(Map.of("status", "mock", "message", "Sprint 3 구현 예정"));
+    public ResponseEntity<ChartDataResponse> getTrade() {
+        List<EconomyIndicator> currentAccount =
+                economyIndicatorService.getIndicators("301Y013", "M", "000000");
+        List<EconomyIndicator> exports =
+                economyIndicatorService.getIndicators("901Y118", "M", "T002");
+        List<EconomyIndicator> imports =
+                economyIndicatorService.getIndicators("901Y118", "M", "T004");
+
+        List<String> labels = currentAccount.stream()
+                .map(EconomyIndicator::getPeriod)
+                .collect(Collectors.toList());
+
+        ChartDataResponse response = ChartDataResponse.builder()
+                .labels(labels)
+                .datasets(List.of(
+                        toDataset(currentAccount, "경상수지 (백만달러)", "#007bff", null),
+                        toDataset(exports,        "수출금액 (백만달러)", "#28a745", "y1"),
+                        toDataset(imports,        "수입금액 (백만달러)", "#dc3545", "y1")
+                ))
+                .build();
+
+        return ResponseEntity.ok(response);
     }
 
+    // ── 섹션6: 고용/경기 ─────────────────────────────────
     @GetMapping("/employment")
-    public ResponseEntity<Map<String, Object>> getEmployment() {
-        return ResponseEntity.ok(Map.of("status", "mock", "message", "Sprint 3 구현 예정"));
+    public ResponseEntity<ChartDataResponse> getEmployment() {
+        List<EconomyIndicator> unemploymentRate =
+                economyIndicatorService.getIndicators("901Y027", "M", "I61BC");
+        List<EconomyIndicator> employed =
+                economyIndicatorService.getIndicators("901Y027", "M", "I61BA");
+
+        List<String> labels = unemploymentRate.stream()
+                .map(EconomyIndicator::getPeriod)
+                .collect(Collectors.toList());
+
+        ChartDataResponse response = ChartDataResponse.builder()
+                .labels(labels)
+                .datasets(List.of(
+                        toDataset(unemploymentRate, "실업률 (%)",     "#dc3545", "y"),
+                        toDataset(employed,         "취업자수 (천명)", "#007bff", "y1")
+                ))
+                .build();
+
+        return ResponseEntity.ok(response);
     }
 
+    // ── 섹션7: 통화/유동성 ───────────────────────────────
     @GetMapping("/liquidity")
-    public ResponseEntity<Map<String, Object>> getLiquidity() {
-        return ResponseEntity.ok(Map.of("status", "mock", "message", "Sprint 3 구현 예정"));
+    public ResponseEntity<ChartDataResponse> getLiquidity() {
+        List<EconomyIndicator> m2 =
+                economyIndicatorService.getIndicators("902Y005", "M", "KR");
+        List<EconomyIndicator> reserveKr =
+                economyIndicatorService.getIndicators("902Y014", "M", "KR");
+        List<EconomyIndicator> reserveJp =
+                economyIndicatorService.getIndicators("902Y014", "M", "JP");
+        List<EconomyIndicator> reserveCn =
+                economyIndicatorService.getIndicators("902Y014", "M", "CN");
+
+        List<String> labels = m2.stream()
+                .map(EconomyIndicator::getPeriod)
+                .collect(Collectors.toList());
+
+        ChartDataResponse response = ChartDataResponse.builder()
+                .labels(labels)
+                .datasets(List.of(
+                        toDataset(m2,        "M2 광의통화 (조원)",       "#6610f2", "y"),
+                        toDataset(reserveKr, "외환보유액 한국 (억달러)", "#007bff", "y1"),
+                        toDataset(reserveJp, "외환보유액 일본 (억달러)", "#fd7e14", "y1"),
+                        toDataset(reserveCn, "외환보유액 중국 (억달러)", "#dc3545", "y1")
+                ))
+                .build();
+
+        return ResponseEntity.ok(response);
     }
 
+    // ── 섹션8: 인구/출산율/고령화 ────────────────────────
     @GetMapping("/population")
-    public ResponseEntity<Map<String, Object>> getPopulation() {
-        return ResponseEntity.ok(Map.of("status", "mock", "message", "Sprint 3 구현 예정"));
+    public ResponseEntity<ChartDataResponse> getPopulation() {
+        List<EconomyIndicator> popTotal =
+                economyIndicatorService.getIndicators("901Y028", "A", "I35A");
+        List<EconomyIndicator> popMale =
+                economyIndicatorService.getIndicators("901Y028", "A", "I35B");
+        List<EconomyIndicator> popFemale =
+                economyIndicatorService.getIndicators("901Y028", "A", "I35C");
+        List<EconomyIndicator> elderRatio =
+                economyIndicatorService.getIndicators("901Y028", "A", "I35D");
+        List<EconomyIndicator> birthRate =
+                economyIndicatorService.getIndicators("901Y028", "A", "I35E");
+
+        List<String> labels = popTotal.stream()
+                .map(EconomyIndicator::getPeriod)
+                .collect(Collectors.toList());
+
+        ChartDataResponse response = ChartDataResponse.builder()
+                .labels(labels)
+                .datasets(List.of(
+                        toDataset(popMale,    "남성 인구 (천명)",  "#007bff", "y"),
+                        toDataset(popFemale,  "여성 인구 (천명)",  "#e83e8c", "y"),
+                        toDataset(elderRatio, "고령인구비율 (%)", "#fd7e14", "y1"),
+                        toDataset(birthRate,  "합계출산율",        "#28a745", "y1")
+                ))
+                .build();
+
+        return ResponseEntity.ok(response);
     }
 
     // ── 내부 헬퍼 ─────────────────────────────────────────
