@@ -55,13 +55,11 @@ public class EconomyApiController {
         return ResponseEntity.ok(response);
     }
 
-    // ── 섹션2: GDP ───────────────────────────────────────
+    // ── 섹션2a: GDP 성장률 ──────────────────────────────
     @GetMapping("/gdp")
     public ResponseEntity<ChartDataResponse> getGdp() {
         List<EconomyIndicator> growthRate =
                 economyIndicatorService.getIndicators("902Y015", "Q", "KOR");
-        List<EconomyIndicator> gdpPerCapita =
-                economyIndicatorService.getIndicators("902Y018", "A", "KOR");
 
         List<String> labels = growthRate.stream()
                 .map(EconomyIndicator::getPeriod)
@@ -70,8 +68,27 @@ public class EconomyApiController {
         ChartDataResponse response = ChartDataResponse.builder()
                 .labels(labels)
                 .datasets(List.of(
-                        toDataset(growthRate,   "GDP 성장률 (%)", "#007bff", null),
-                        toDataset(gdpPerCapita, "1인당 GDP (달러)", "#6c757d", "y1")
+                        toDataset(growthRate, "GDP 성장률 (%)", "#007bff", null)
+                ))
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
+
+    // ── 섹션2b: 1인당 국민소득 ────────────────────────────
+    @GetMapping("/gdp-income")
+    public ResponseEntity<ChartDataResponse> getGdpIncome() {
+        List<EconomyIndicator> gdpPerCapita =
+                economyIndicatorService.getIndicators("902Y018", "A", "KOR");
+
+        List<String> labels = gdpPerCapita.stream()
+                .map(EconomyIndicator::getPeriod)
+                .collect(Collectors.toList());
+
+        ChartDataResponse response = ChartDataResponse.builder()
+                .labels(labels)
+                .datasets(List.of(
+                        toDataset(gdpPerCapita, "1인당 GDP (달러)", "#6c757d", null)
                 ))
                 .build();
 
@@ -179,17 +196,11 @@ public class EconomyApiController {
         return ResponseEntity.ok(response);
     }
 
-    // ── 섹션7: 통화/유동성 ───────────────────────────────
+    // ── 섹션7a: 통화량 (M2) ──────────────────────────────
     @GetMapping("/liquidity")
     public ResponseEntity<ChartDataResponse> getLiquidity() {
         List<EconomyIndicator> m2 =
                 economyIndicatorService.getIndicators("902Y005", "M", "KR");
-        List<EconomyIndicator> reserveKr =
-                economyIndicatorService.getIndicators("902Y014", "M", "KR");
-        List<EconomyIndicator> reserveJp =
-                economyIndicatorService.getIndicators("902Y014", "M", "JP");
-        List<EconomyIndicator> reserveCn =
-                economyIndicatorService.getIndicators("902Y014", "M", "CN");
 
         List<String> labels = m2.stream()
                 .map(EconomyIndicator::getPeriod)
@@ -198,10 +209,33 @@ public class EconomyApiController {
         ChartDataResponse response = ChartDataResponse.builder()
                 .labels(labels)
                 .datasets(List.of(
-                        toDataset(m2,        "M2 광의통화 (조원)",       "#6610f2", "y"),
-                        toDataset(reserveKr, "외환보유액 한국 (억달러)", "#007bff", "y1"),
-                        toDataset(reserveJp, "외환보유액 일본 (억달러)", "#fd7e14", "y1"),
-                        toDataset(reserveCn, "외환보유액 중국 (억달러)", "#dc3545", "y1")
+                        toDataset(m2, "M2 광의통화 (조원)", "#6610f2", null)
+                ))
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
+
+    // ── 섹션7b: 외환보유액 ───────────────────────────────
+    @GetMapping("/forex-reserve")
+    public ResponseEntity<ChartDataResponse> getForexReserve() {
+        List<EconomyIndicator> reserveKr =
+                economyIndicatorService.getIndicators("902Y014", "M", "KR");
+        List<EconomyIndicator> reserveJp =
+                economyIndicatorService.getIndicators("902Y014", "M", "JP");
+        List<EconomyIndicator> reserveCn =
+                economyIndicatorService.getIndicators("902Y014", "M", "CN");
+
+        List<String> labels = reserveKr.stream()
+                .map(EconomyIndicator::getPeriod)
+                .collect(Collectors.toList());
+
+        ChartDataResponse response = ChartDataResponse.builder()
+                .labels(labels)
+                .datasets(List.of(
+                        toDataset(reserveKr, "한국 (억달러)", "#007bff", null),
+                        toDataset(reserveJp, "일본 (억달러)", "#fd7e14", null),
+                        toDataset(reserveCn, "중국 (억달러)", "#dc3545", null)
                 ))
                 .build();
 
@@ -213,10 +247,6 @@ public class EconomyApiController {
     public ResponseEntity<ChartDataResponse> getPopulation() {
         List<EconomyIndicator> popTotal =
                 economyIndicatorService.getIndicators("901Y028", "A", "I35A");
-        List<EconomyIndicator> popMale =
-                economyIndicatorService.getIndicators("901Y028", "A", "I35B");
-        List<EconomyIndicator> popFemale =
-                economyIndicatorService.getIndicators("901Y028", "A", "I35C");
         List<EconomyIndicator> elderRatio =
                 economyIndicatorService.getIndicators("901Y028", "A", "I35D");
         List<EconomyIndicator> birthRate =
@@ -229,8 +259,7 @@ public class EconomyApiController {
         ChartDataResponse response = ChartDataResponse.builder()
                 .labels(labels)
                 .datasets(List.of(
-                        toDataset(popMale,    "남성 인구 (천명)",  "#007bff", "y"),
-                        toDataset(popFemale,  "여성 인구 (천명)",  "#e83e8c", "y"),
+                        toDataset(popTotal,   "총인구 (천명)",     "#007bff", "y"),
                         toDataset(elderRatio, "고령인구비율 (%)", "#fd7e14", "y1"),
                         toDataset(birthRate,  "합계출산율",        "#28a745", "y1")
                 ))

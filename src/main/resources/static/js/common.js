@@ -159,6 +159,16 @@ function loadGdpChart() {
         .catch(err => { console.error('GDP 데이터 로드 실패:', err); showChartError('gdpChart', 'GDP 데이터를 불러올 수 없습니다.'); });
 }
 
+function loadGdpIncomeChart() {
+    fetch('/krEconoMon/api/economy/gdp-income')
+        .then(res => {
+            if (!res.ok) throw new Error('1인당GDP 데이터 로드 실패: ' + res.status);
+            return res.json();
+        })
+        .then(data => createLineChart('gdpIncomeChart', data))
+        .catch(err => { console.error('1인당GDP 데이터 로드 실패:', err); showChartError('gdpIncomeChart', '1인당 GDP 데이터를 불러올 수 없습니다.'); });
+}
+
 function loadExchangeRateChart() {
     fetch('/krEconoMon/api/economy/exchange-rate')
         .then(res => {
@@ -247,19 +257,18 @@ function loadLiquidityChart() {
             if (!res.ok) throw new Error('통화 데이터 로드 실패: ' + res.status);
             return res.json();
         })
-        .then(data => {
-            const options = {
-                scales: {
-                    y:  { type: 'linear', display: true, position: 'left',
-                          title: { display: true, text: 'M2 (조원)' } },
-                    y1: { type: 'linear', display: true, position: 'right',
-                          title: { display: true, text: '외환보유액 (억달러)' },
-                          grid: { drawOnChartArea: false } }
-                }
-            };
-            createLineChart('liquidityChart', data, options);
-        })
+        .then(data => createLineChart('liquidityChart', data))
         .catch(err => { console.error('통화 데이터 로드 실패:', err); showChartError('liquidityChart', '통화 데이터를 불러올 수 없습니다.'); });
+}
+
+function loadForexReserveChart() {
+    fetch('/krEconoMon/api/economy/forex-reserve')
+        .then(res => {
+            if (!res.ok) throw new Error('외환보유액 데이터 로드 실패: ' + res.status);
+            return res.json();
+        })
+        .then(data => createLineChart('forexReserveChart', data))
+        .catch(err => { console.error('외환보유액 데이터 로드 실패:', err); showChartError('forexReserveChart', '외환보유액 데이터를 불러올 수 없습니다.'); });
 }
 
 function loadEconomyAnalysis() {
@@ -329,9 +338,9 @@ function loadPopulationChart() {
             const options = {
                 scales: {
                     y:  { type: 'linear', display: true, position: 'left',
-                          title: { display: true, text: '인구 (천명)' } },
+                          title: { display: true, text: '총인구 (천명)' } },
                     y1: { type: 'linear', display: true, position: 'right',
-                          title: { display: true, text: '비율 / 출산율' },
+                          title: { display: true, text: '고령비율(%) / 출산율' },
                           grid: { drawOnChartArea: false } }
                 }
             };
@@ -346,11 +355,13 @@ document.addEventListener('DOMContentLoaded', () => {
         economyTab.addEventListener('shown.bs.tab', () => {
             loadInterestRateChart();
             loadGdpChart();
+            loadGdpIncomeChart();
             loadExchangeRateChart();
             loadPriceIndexChart();
             loadTradeChart();
             loadEmploymentChart();
             loadLiquidityChart();
+            loadForexReserveChart();
             loadPopulationChart();
             loadEconomyAnalysis();
             loadEconomyCartoon();
@@ -358,11 +369,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (economyTab.classList.contains('active')) {
             loadInterestRateChart();
             loadGdpChart();
+            loadGdpIncomeChart();
             loadExchangeRateChart();
             loadPriceIndexChart();
             loadTradeChart();
             loadEmploymentChart();
             loadLiquidityChart();
+            loadForexReserveChart();
             loadPopulationChart();
             loadEconomyAnalysis();
             loadEconomyCartoon();
