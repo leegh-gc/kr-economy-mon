@@ -132,6 +132,13 @@ function createBarChart(canvasId, chartData, options = {}) {
 // 섹션별 데이터 로드 함수
 // ============================================================
 
+function showChartError(canvasId, msg) {
+    const canvas = document.getElementById(canvasId);
+    if (canvas && canvas.parentElement) {
+        canvas.parentElement.innerHTML = KrEconoMon.errorMessage(msg);
+    }
+}
+
 function loadInterestRateChart() {
     fetch('/krEconoMon/api/economy/interest-rate')
         .then(res => {
@@ -139,19 +146,25 @@ function loadInterestRateChart() {
             return res.json();
         })
         .then(data => createLineChart('interestRateChart', data))
-        .catch(err => console.error(err));
+        .catch(err => { console.error(err); showChartError('interestRateChart', '금리 데이터를 불러올 수 없습니다.'); });
 }
 
 function loadGdpChart() {
     fetch('/krEconoMon/api/economy/gdp')
-        .then(res => res.json())
+        .then(res => {
+            if (!res.ok) throw new Error('GDP 데이터 로드 실패: ' + res.status);
+            return res.json();
+        })
         .then(data => createBarChart('gdpChart', data))
-        .catch(err => console.error('GDP 데이터 로드 실패:', err));
+        .catch(err => { console.error('GDP 데이터 로드 실패:', err); showChartError('gdpChart', 'GDP 데이터를 불러올 수 없습니다.'); });
 }
 
 function loadExchangeRateChart() {
     fetch('/krEconoMon/api/economy/exchange-rate')
-        .then(res => res.json())
+        .then(res => {
+            if (!res.ok) throw new Error('환율 데이터 로드 실패: ' + res.status);
+            return res.json();
+        })
         .then(data => {
             const options = {
                 scales: {
@@ -168,14 +181,17 @@ function loadExchangeRateChart() {
             };
             createLineChart('exchangeRateChart', data, options);
         })
-        .catch(err => console.error('환율 데이터 로드 실패:', err));
+        .catch(err => { console.error('환율 데이터 로드 실패:', err); showChartError('exchangeRateChart', '환율 데이터를 불러올 수 없습니다.'); });
 }
 
 function loadPriceIndexChart() {
     fetch('/krEconoMon/api/economy/price-index')
-        .then(res => res.json())
+        .then(res => {
+            if (!res.ok) throw new Error('물가 데이터 로드 실패: ' + res.status);
+            return res.json();
+        })
         .then(data => createLineChart('priceIndexChart', data))
-        .catch(err => console.error('물가 데이터 로드 실패:', err));
+        .catch(err => { console.error('물가 데이터 로드 실패:', err); showChartError('priceIndexChart', '물가 데이터를 불러올 수 없습니다.'); });
 }
 
 function loadTradeChart() {
@@ -201,7 +217,7 @@ function loadTradeChart() {
             };
             createLineChart('tradeChart', tradeData, options);
         })
-        .catch(err => console.error('무역 데이터 로드 실패:', err));
+        .catch(err => { console.error('무역 데이터 로드 실패:', err); showChartError('tradeChart', '무역 데이터를 불러올 수 없습니다.'); });
 }
 
 function loadEmploymentChart() {
@@ -222,7 +238,7 @@ function loadEmploymentChart() {
             };
             createLineChart('employmentChart', data, options);
         })
-        .catch(err => console.error('고용 데이터 로드 실패:', err));
+        .catch(err => { console.error('고용 데이터 로드 실패:', err); showChartError('employmentChart', '고용 데이터를 불러올 수 없습니다.'); });
 }
 
 function loadLiquidityChart() {
@@ -243,7 +259,7 @@ function loadLiquidityChart() {
             };
             createLineChart('liquidityChart', data, options);
         })
-        .catch(err => console.error('통화 데이터 로드 실패:', err));
+        .catch(err => { console.error('통화 데이터 로드 실패:', err); showChartError('liquidityChart', '통화 데이터를 불러올 수 없습니다.'); });
 }
 
 function loadEconomyAnalysis() {
@@ -321,7 +337,7 @@ function loadPopulationChart() {
             };
             createLineChart('populationChart', data, options);
         })
-        .catch(err => console.error('인구 데이터 로드 실패:', err));
+        .catch(err => { console.error('인구 데이터 로드 실패:', err); showChartError('populationChart', '인구 데이터를 불러올 수 없습니다.'); });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
