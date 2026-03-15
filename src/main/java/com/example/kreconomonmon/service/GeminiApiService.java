@@ -28,11 +28,11 @@ public class GeminiApiService {
 
     public GeminiApiService(
             @Value("${GEMINI_API_KEY:}") String apiKey,
-            @Value("${app.gemini.model:gemini-2.0-flash}") String model,
-            @Value("${app.gemini.image-model:gemini-2.0-flash-exp}") String imageModel) {
+            @Value("${app.gemini.model:gemini-3-flash-preview}") String model,
+            @Value("${app.gemini.image-model:imagen-4.0-fast-generate-001}") String imageModel) {
         this.apiKey = apiKey;
         this.textApiUrl  = API_BASE + model + ":generateContent";
-        this.imageApiUrl = API_BASE + imageModel + ":generateContent";
+        this.imageApiUrl = API_BASE + imageModel + ":predict";
         this.httpClient = HttpClient.newBuilder()
             .connectTimeout(Duration.ofSeconds(10))
             .build();
@@ -140,15 +140,12 @@ public class GeminiApiService {
     String buildImageRequestBody(String prompt) {
         try {
             ObjectNode root = objectMapper.createObjectNode();
-            ArrayNode contents = root.putArray("contents");
-            ObjectNode content = contents.addObject();
-            ArrayNode parts = content.putArray("parts");
-            parts.addObject().put("text", prompt);
+            ArrayNode instances = root.putArray("instances");
+            ObjectNode instance = instances.addObject();
+            instance.put("prompt", prompt);
 
-            ObjectNode generationConfig = root.putObject("generationConfig");
-            ArrayNode modalities = generationConfig.putArray("responseModalities");
-            modalities.add("IMAGE");
-            modalities.add("TEXT");
+            ObjectNode parameters = root.putObject("parameters");
+            parameters.put("sampleCount", "1");
 
             return objectMapper.writeValueAsString(root);
         } catch (Exception e) {
@@ -159,12 +156,13 @@ public class GeminiApiService {
     String extractImageFromResponse(String responseBody) {
         try {
             JsonNode root = objectMapper.readTree(responseBody);
-            JsonNode parts = root.path("candidates").get(0)
-                .path("content").path("parts");
-            for (JsonNode part : parts) {
-                JsonNode inlineData = part.path("inlineData");
-                if (!inlineData.isMissingNode()) {
-                    return inlineData.path("data").asText("");
+            JsonNode predictions = root.path("predictions");
+
+            if (!predictions.isMissingNode() && predictions.isArray() && predictions.size() > 0) {
+                JsonNode prediction = predictions.get(0);
+                JsonNode base64Data = prediction.path("bytesBese64Encoded");
+                if (!base64Data.isMissingNode()) {
+                    return base64Data.asText("");
                 }
             }
             log.warn("Gemini 응답에 이미지 데이터가 없습니다.");
