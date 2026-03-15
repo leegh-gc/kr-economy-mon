@@ -36,7 +36,7 @@ public class AnalysisCacheService {
     }
 
     public String getCachedText(String cacheKey, String currentDataHash) {
-        Optional<AnalysisCache> cached = repository.findById(cacheKey);
+        Optional<AnalysisCache> cached = findByKey(cacheKey);
         if (cached.isEmpty()) {
             log.debug("캐시 없음: cacheKey={}", cacheKey);
             return null;
@@ -52,7 +52,7 @@ public class AnalysisCacheService {
     }
 
     public String getCachedImage(String cacheKey, String currentDataHash) {
-        Optional<AnalysisCache> cached = repository.findById(cacheKey);
+        Optional<AnalysisCache> cached = findByKey(cacheKey);
         if (cached.isEmpty()) {
             return null;
         }
@@ -70,7 +70,7 @@ public class AnalysisCacheService {
 
     @Transactional
     public void saveOrUpdate(String cacheKey, String cacheType, String contentText, String imageData, String dataHash) {
-        Optional<AnalysisCache> existing = repository.findById(cacheKey);
+        Optional<AnalysisCache> existing = findByKey(cacheKey);
         if (existing.isPresent()) {
             existing.get().updateContent(contentText, imageData, dataHash);
             repository.save(existing.get());

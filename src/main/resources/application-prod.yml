@@ -14,6 +14,9 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+  flyway:
+    baseline-on-migrate: true
+    baseline-version: 0
   thymeleaf:
     cache: true
 
@@ -25,6 +28,9 @@ app:
     api-key: ${GEMINI_API_KEY}
     model: gemini-3-flash
     timeout-seconds: 30
+    text-api-url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent
+    image-api-url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent
+  admin-key: ${ADMIN_KEY}
 
 management:
   endpoints:

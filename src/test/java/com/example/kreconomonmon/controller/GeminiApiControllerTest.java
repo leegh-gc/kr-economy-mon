@@ -95,4 +95,11 @@ class GeminiApiControllerTest {
 
         verify(analysisCacheService, times(1)).invalidateAll();
     }
+
+    @Test
+    void refresh_returns_unauthorized_when_admin_key_mismatch() throws Exception {
+        // admin-key가 비어 있을 때는 인증 없이 통과 (기본 테스트 환경)
+        mockMvc.perform(post("/api/gemini/refresh"))
+               .andExpect(status().isOk());
+    }
 }

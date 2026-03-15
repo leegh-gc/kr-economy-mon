@@ -9,7 +9,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith(MockitoExtension.class)
 class GeminiApiServiceTest {
 
-    private final GeminiApiService service = new GeminiApiService("test-api-key");
+    private final GeminiApiService service = new GeminiApiService(
+        "test-api-key",
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent"
+    );
 
     @Test
     void buildRequestBody_contains_prompt() {
@@ -18,6 +22,14 @@ class GeminiApiServiceTest {
         assertThat(requestBody).contains("경제 분석 요청 프롬프트");
         assertThat(requestBody).contains("contents");
         assertThat(requestBody).contains("parts");
+    }
+
+    @Test
+    void buildRequestBody_handles_special_characters() {
+        String requestBody = service.buildRequestBody("탭\t문자와 \"따옴표\" 테스트");
+
+        assertThat(requestBody).contains("탭");
+        assertThat(requestBody).contains("따옴표");
     }
 
     @Test

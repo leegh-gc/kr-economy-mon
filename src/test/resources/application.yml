@@ -1,0 +1,44 @@
+server:
+  port: 8086
+  servlet:
+    context-path: /krEconoMon
+  compression:
+    enabled: true
+    mime-types: application/json,application/javascript,text/css,text/html
+    min-response-size: 1024
+
+spring:
+  application:
+    name: kr-economy-mon
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    open-in-view: false
+  flyway:
+    enabled: false
+  thymeleaf:
+    cache: false
+    prefix: classpath:/templates/
+    suffix: .html
+
+app:
+  ecos:
+    api-key: test-key
+    base-url: https://ecos.bok.or.kr/api
+  gemini:
+    api-key: test-key
+    model: gemini-2.0-flash
+    timeout-seconds: 5
+    text-api-url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent
+    image-api-url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent
+  admin-key:
+
+logging:
+  level:
+    com.example.kreconomonmon: DEBUG
