@@ -18,6 +18,8 @@ import java.time.Duration;
 @Service
 public class GeminiApiService {
 
+    private static final String API_BASE = "https://generativelanguage.googleapis.com/v1beta/models/";
+
     private final String apiKey;
     private final String textApiUrl;
     private final String imageApiUrl;
@@ -26,11 +28,11 @@ public class GeminiApiService {
 
     public GeminiApiService(
             @Value("${GEMINI_API_KEY:}") String apiKey,
-            @Value("${app.gemini.text-api-url:https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent}") String textApiUrl,
-            @Value("${app.gemini.image-api-url:https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent}") String imageApiUrl) {
+            @Value("${app.gemini.model:gemini-2.0-flash}") String model,
+            @Value("${app.gemini.image-model:gemini-2.0-flash-exp}") String imageModel) {
         this.apiKey = apiKey;
-        this.textApiUrl = textApiUrl;
-        this.imageApiUrl = imageApiUrl;
+        this.textApiUrl  = API_BASE + model + ":generateContent";
+        this.imageApiUrl = API_BASE + imageModel + ":generateContent";
         this.httpClient = HttpClient.newBuilder()
             .connectTimeout(Duration.ofSeconds(10))
             .build();
