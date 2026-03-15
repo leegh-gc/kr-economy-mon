@@ -47,20 +47,22 @@ public class RealEstateApiController {
     public ResponseEntity<ChartDataResponse> getPrice(
             @RequestParam String region,
             @RequestParam(defaultValue = "UA04") String areaType,
-            @RequestParam String codes) {
+            @RequestParam String codes,
+            @RequestParam(defaultValue = "10") int years) {
 
         List<String> sigunguCodes = Arrays.asList(codes.split(","));
-        return ResponseEntity.ok(realEstateService.getPriceChartData(sigunguCodes, areaType));
+        return ResponseEntity.ok(realEstateService.getPriceChartData(sigunguCodes, areaType, years));
     }
 
     @GetMapping("/lease")
     public ResponseEntity<ChartDataResponse> getLease(
             @RequestParam String region,
             @RequestParam(defaultValue = "UA04") String areaType,
-            @RequestParam String codes) {
+            @RequestParam String codes,
+            @RequestParam(defaultValue = "10") int years) {
 
         List<String> sigunguCodes = Arrays.asList(codes.split(","));
-        return ResponseEntity.ok(realEstateService.getLeaseChartData(sigunguCodes, areaType));
+        return ResponseEntity.ok(realEstateService.getLeaseChartData(sigunguCodes, areaType, years));
     }
 
     @GetMapping("/top5/trade")

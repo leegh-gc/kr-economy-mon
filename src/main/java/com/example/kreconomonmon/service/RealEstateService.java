@@ -43,9 +43,9 @@ public class RealEstateService {
         return DISTRICT_NAMES.getOrDefault(code, code);
     }
 
-    public ChartDataResponse getPriceChartData(List<String> sigunguCodes, String useAreaType) {
+    public ChartDataResponse getPriceChartData(List<String> sigunguCodes, String useAreaType, int years) {
         List<StatSigunguYymm> rows =
-            tradeRepository.findByCodesAndAreaType(sigunguCodes, useAreaType);
+            tradeRepository.findByCodesAndAreaType(sigunguCodes, useAreaType, years);
 
         List<String> labels = rows.stream()
             .filter(r -> r.getSigunguCode().equals(sigunguCodes.get(0)))
@@ -77,9 +77,9 @@ public class RealEstateService {
         return ChartDataResponse.builder().labels(labels).datasets(datasets).build();
     }
 
-    public ChartDataResponse getLeaseChartData(List<String> sigunguCodes, String useAreaType) {
+    public ChartDataResponse getLeaseChartData(List<String> sigunguCodes, String useAreaType, int years) {
         List<StatLeaseSigungu> rows =
-            leaseRepository.findByCodesAndAreaType(sigunguCodes, useAreaType);
+            leaseRepository.findByCodesAndAreaType(sigunguCodes, useAreaType, years);
 
         List<String> labels = rows.stream()
             .filter(r -> r.getSigunguCode().equals(sigunguCodes.get(0)))

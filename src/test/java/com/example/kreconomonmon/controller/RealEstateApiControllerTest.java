@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -44,7 +45,7 @@ class RealEstateApiControllerTest {
 
     @Test
     void getPrice_returnsChartDataResponse() throws Exception {
-        when(realEstateService.getPriceChartData(any(), any()))
+        when(realEstateService.getPriceChartData(any(), any(), anyInt()))
             .thenReturn(ChartDataResponse.builder()
                 .labels(List.of("202301"))
                 .datasets(List.of())
@@ -60,7 +61,7 @@ class RealEstateApiControllerTest {
 
     @Test
     void getLease_returnsChartDataResponse() throws Exception {
-        when(realEstateService.getLeaseChartData(any(), any()))
+        when(realEstateService.getLeaseChartData(any(), any(), anyInt()))
             .thenReturn(ChartDataResponse.builder()
                 .labels(List.of("202301"))
                 .datasets(List.of())

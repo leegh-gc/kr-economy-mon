@@ -3,6 +3,7 @@
  */
 
 let currentAreaType = 'UA04';
+let currentYears = 10;
 
 const REGION_CODES = {
     gangnam:  ['11680', '11650', '11710'],
@@ -137,7 +138,7 @@ function loadRegionCharts(regionId, sigunguCodes) {
     const tradeContainer = document.getElementById('chart-trade-' + regionId);
     if (tradeContainer) tradeContainer.innerHTML = KrEconoMon.loadingSpinner();
 
-    fetch(`/krEconoMon/api/real-estate/price?region=${regionId}&areaType=${areaType}&codes=${codesParam}`)
+    fetch(`/krEconoMon/api/real-estate/price?region=${regionId}&areaType=${areaType}&codes=${codesParam}&years=${currentYears}`)
         .then(res => res.json())
         .then(data => {
             if (tradeContainer) {
@@ -153,7 +154,7 @@ function loadRegionCharts(regionId, sigunguCodes) {
     const leaseContainer = document.getElementById('chart-lease-' + regionId);
     if (leaseContainer) leaseContainer.innerHTML = KrEconoMon.loadingSpinner();
 
-    fetch(`/krEconoMon/api/real-estate/lease?region=${regionId}&areaType=${areaType}&codes=${codesParam}`)
+    fetch(`/krEconoMon/api/real-estate/lease?region=${regionId}&areaType=${areaType}&codes=${codesParam}&years=${currentYears}`)
         .then(res => res.json())
         .then(data => {
             if (leaseContainer) {
@@ -202,4 +203,17 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    document.querySelectorAll('.period-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentYears = parseInt(btn.getAttribute('data-years'), 10);
+            const activeRegionBtn = document.querySelector('#regionTabs button.active[data-region]');
+            if (activeRegionBtn) {
+                const regionId = activeRegionBtn.getAttribute('data-region');
+                loadRegionCharts(regionId, REGION_CODES[regionId]);
+            }
+        });
+    });
 });

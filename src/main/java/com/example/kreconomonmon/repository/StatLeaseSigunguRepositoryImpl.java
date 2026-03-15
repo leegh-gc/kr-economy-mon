@@ -17,9 +17,12 @@ public class StatLeaseSigunguRepositoryImpl implements StatLeaseSigunguRepositor
     }
 
     @Override
-    public List<StatLeaseSigungu> findByCodesAndAreaType(List<String> sigunguCodes, String useAreaType) {
+    public List<StatLeaseSigungu> findByCodesAndAreaType(List<String> sigunguCodes, String useAreaType, int years) {
         QStatLeaseSigungu q = QStatLeaseSigungu.statLeaseSigungu;
-        String tenYearsAgo = String.valueOf(LocalDate.now().getYear() - 10) + "01";
+        int currentYear = LocalDate.now().getYear();
+        String startYymm = years == 0
+                ? currentYear + "01"
+                : (currentYear - years) + "01";
 
         return queryFactory
                 .selectFrom(q)
@@ -27,7 +30,7 @@ public class StatLeaseSigunguRepositoryImpl implements StatLeaseSigunguRepositor
                     q.sigunguCode.in(sigunguCodes),
                     q.useAreaType.eq(useAreaType),
                     q.rentGbn.eq("0"),
-                    q.dealYymm.goe(tenYearsAgo)
+                    q.dealYymm.goe(startYymm)
                 )
                 .orderBy(q.sigunguCode.asc(), q.dealYymm.asc())
                 .fetch();

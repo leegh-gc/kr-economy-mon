@@ -19,13 +19,25 @@
         </div>
     </div>
 
-    <!-- 면적 타입 선택 -->
-    <div class="d-flex align-items-center mb-3">
-        <label for="areaTypeSelect" class="form-label me-2 mb-0 fw-semibold">면적 타입:</label>
-        <select id="areaTypeSelect" class="form-select form-select-sm w-auto">
-            <option value="UA04" selected>UA04 - 전용 84&#13217;</option>
-            <option value="UA02">UA02 - 전용 59&#13217;</option>
-        </select>
+    <!-- 면적 타입 + 기간 선택 -->
+    <div class="d-flex align-items-center gap-3 mb-3 flex-wrap">
+        <div class="d-flex align-items-center">
+            <label for="areaTypeSelect" class="form-label me-2 mb-0 fw-semibold">면적 타입:</label>
+            <select id="areaTypeSelect" class="form-select form-select-sm w-auto">
+                <option value="UA04" selected>UA04 - 전용 84&#13217;</option>
+                <option value="UA02">UA02 - 전용 59&#13217;</option>
+            </select>
+        </div>
+        <div class="d-flex align-items-center">
+            <span class="me-2 fw-semibold">기간:</span>
+            <div class="btn-group btn-group-sm" id="periodBtnGroup" role="group">
+                <button type="button" class="btn btn-outline-secondary period-btn" data-years="0">올해</button>
+                <button type="button" class="btn btn-outline-secondary period-btn" data-years="3">3년</button>
+                <button type="button" class="btn btn-outline-secondary period-btn" data-years="5">5년</button>
+                <button type="button" class="btn btn-outline-secondary period-btn active" data-years="10">10년</button>
+                <button type="button" class="btn btn-outline-secondary period-btn" data-years="15">15년</button>
+            </div>
+        </div>
     </div>
 
     <!-- 4개 권역 탭 -->

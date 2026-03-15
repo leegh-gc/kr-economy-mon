@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -40,10 +41,10 @@ class RealEstateServiceTest {
             StatSigunguYymm.builder()
                 .sigunguCode("11650").dealYymm("202301").avgPrice(new BigDecimal("130000")).build()
         );
-        when(tradeRepository.findByCodesAndAreaType(anyList(), anyString())).thenReturn(mockData);
+        when(tradeRepository.findByCodesAndAreaType(anyList(), anyString(), anyInt())).thenReturn(mockData);
 
         ChartDataResponse result = realEstateService.getPriceChartData(
-            List.of("11680", "11650", "11710"), "UA04"
+            List.of("11680", "11650", "11710"), "UA04", 10
         );
 
         assertThat(result.getDatasets()).hasSize(3);

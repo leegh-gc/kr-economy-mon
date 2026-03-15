@@ -17,16 +17,19 @@ public class StatSigunguYymmRepositoryImpl implements StatSigunguYymmRepositoryC
     }
 
     @Override
-    public List<StatSigunguYymm> findByCodesAndAreaType(List<String> sigunguCodes, String useAreaType) {
+    public List<StatSigunguYymm> findByCodesAndAreaType(List<String> sigunguCodes, String useAreaType, int years) {
         QStatSigunguYymm q = QStatSigunguYymm.statSigunguYymm;
-        String tenYearsAgo = String.valueOf(LocalDate.now().getYear() - 10) + "01";
+        int currentYear = LocalDate.now().getYear();
+        String startYymm = years == 0
+                ? currentYear + "01"
+                : (currentYear - years) + "01";
 
         return queryFactory
                 .selectFrom(q)
                 .where(
                     q.sigunguCode.in(sigunguCodes),
                     q.useAreaType.eq(useAreaType),
-                    q.dealYymm.goe(tenYearsAgo)
+                    q.dealYymm.goe(startYymm)
                 )
                 .orderBy(q.sigunguCode.asc(), q.dealYymm.asc())
                 .fetch();

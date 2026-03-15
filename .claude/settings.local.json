@@ -22,7 +22,26 @@
       "Bash(~/.gradle/wrapper/dists/gradle-8.8-bin/dl7vupf4psengwqhwktix4v1/gradle-8.8/bin/gradle -p /c/Git/kr-economy-mon test 2>&1)",
       "Bash(~/.gradle/wrapper/dists/gradle-8.8-bin/dl7vupf4psengwqhwktix4v1/gradle-8.8/bin/gradle -p /c/Git/kr-economy-mon test --info 2>&1 | grep -E \"Test.*PASSED|Test.*FAILED|tests were\" | head -60)",
       "Bash(~/.gradle/wrapper/dists/gradle-8.8-bin/dl7vupf4psengwqhwktix4v1/gradle-8.8/bin/gradle -p /c/Git/kr-economy-mon clean build 2>&1 | tail -20)",
-      "Bash(which gh:*)"
+      "Bash(which gh:*)",
+      "Bash(\"/c/Users/leegh.UBWARE/.gradle/wrapper/dists/gradle-8.8-bin/dl7vupf4psengwqhwktix4v1/gradle-8.8/bin/gradle\" test:*)",
+      "Bash(ls -1 /c/Git/kr-economy-mon/src/test/java/com/example/kreconomonmon/**/*.java)",
+      "Bash(done)",
+      "Bash(./gradlew clean:*)",
+      "Bash(where java:*)",
+      "Bash(reg query:*)",
+      "Bash(export JAVA_HOME=\"/c/Program Files/Eclipse Adoptium/jdk-21.0.10.7-hotspot\")",
+      "Bash(export JAVA_HOME=\"C:/Program Files/Eclipse Adoptium/jdk-21.0.10.7-hotspot\")",
+      "Bash(\"C:/Program Files/Eclipse Adoptium/jdk-21.0.10.7-hotspot/bin/java.exe\" -version)",
+      "Bash(JAVA_HOME=\"C:\\\\Program Files\\\\Eclipse Adoptium\\\\jdk-21.0.10.7-hotspot\" cmd.exe /c \"gradlew.bat clean build\")",
+      "Bash(export PATH=\"$JAVA_HOME/bin:$PATH\")",
+      "Bash(unset _JAVA_OPTIONS)",
+      "Bash(unset JAVA_TOOL_OPTIONS)",
+      "Bash(bash -x ./gradlew clean build --no-daemon)",
+      "Bash(cmd.exe //c \"set JAVA_HOME=C:\\\\Program Files\\\\Eclipse Adoptium\\\\jdk-21.0.10.7-hotspot && gradlew.bat clean build --no-daemon\")",
+      "Bash(cmd.exe //c \"set JAVA_HOME=C:\\\\Program Files\\\\Eclipse Adoptium\\\\jdk-21.0.10.7-hotspot && .\\\\gradlew.bat clean build --no-daemon\")",
+      "Bash(cmd //c \"set \"\"JAVA_HOME=C:\\\\Program Files\\\\Eclipse Adoptium\\\\jdk-21.0.10.7-hotspot\"\" && call gradlew.bat clean build --no-daemon\")",
+      "Bash(powershell.exe -Command \"$env:JAVA_HOME=''C:\\\\Program Files\\\\Eclipse Adoptium\\\\jdk-21.0.10.7-hotspot''; .\\\\gradlew.bat clean build --no-daemon\")",
+      "Bash(powershell.exe -Command '$env:JAVA_HOME=\"\"C:\\\\Program Files\\\\Eclipse Adoptium\\\\jdk-21.0.10.7-hotspot\"\"; cmd /c \"\".\\\\gradlew.bat clean build --no-daemon\"\"')"
     ]
   }
 }

@@ -28,10 +28,10 @@ class StatSigunguYymmRepositoryTest {
                 .avgPrice(new BigDecimal("150000"))
                 .build();
 
-        when(repository.findByCodesAndAreaType(codes, "UA04"))
+        when(repository.findByCodesAndAreaType(codes, "UA04", 10))
                 .thenReturn(List.of(mockData));
 
-        List<StatSigunguYymm> result = repository.findByCodesAndAreaType(codes, "UA04");
+        List<StatSigunguYymm> result = repository.findByCodesAndAreaType(codes, "UA04", 10);
 
         assertThat(result).hasSize(1);
         assertThat(result.get(0).getSigunguCode()).isEqualTo("11680");
