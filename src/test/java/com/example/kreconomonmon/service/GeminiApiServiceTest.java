@@ -11,8 +11,8 @@ class GeminiApiServiceTest {
 
     private final GeminiApiService service = new GeminiApiService(
         "test-api-key",
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent"
+        "gemini-3-flash-preview",
+        "imagen-4.0-fast-generate-001"
     );
 
     @Test
@@ -60,30 +60,22 @@ class GeminiApiServiceTest {
     }
 
     @Test
-    void buildImageRequestBody_contains_responseModalities() {
+    void buildImageRequestBody_contains_instances_and_prompt() {
         String requestBody = service.buildImageRequestBody("컷툰 생성 프롬프트");
 
         assertThat(requestBody).contains("컷툰 생성 프롬프트");
-        assertThat(requestBody).contains("responseModalities");
-        assertThat(requestBody).contains("IMAGE");
+        assertThat(requestBody).contains("instances");
+        assertThat(requestBody).contains("prompt");
+        assertThat(requestBody).contains("parameters");
     }
 
     @Test
-    void extractImageFromResponse_parses_inline_data() {
+    void extractImageFromResponse_parses_predictions() {
         String mockResponse = """
             {
-              "candidates": [
+              "predictions": [
                 {
-                  "content": {
-                    "parts": [
-                      {
-                        "inlineData": {
-                          "mimeType": "image/png",
-                          "data": "base64encodedimagedata=="
-                        }
-                      }
-                    ]
-                  }
+                  "bytesBese64Encoded": "base64encodedimagedata=="
                 }
               ]
             }
@@ -95,18 +87,10 @@ class GeminiApiServiceTest {
     }
 
     @Test
-    void extractImageFromResponse_returns_empty_when_no_image_part() {
+    void extractImageFromResponse_returns_empty_when_no_predictions() {
         String mockResponse = """
             {
-              "candidates": [
-                {
-                  "content": {
-                    "parts": [
-                      { "text": "텍스트만 있음" }
-                    ]
-                  }
-                }
-              ]
+              "predictions": []
             }
             """;
 
