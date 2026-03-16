@@ -7,6 +7,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -36,8 +37,9 @@ class EcosApiServiceTest {
         String[] range = ecosApiService.buildDateRange("M");
 
         int currentYear = LocalDate.now().getYear();
+        String expectedEnd = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMM"));
         assertThat(range[0]).isEqualTo((currentYear - 10) + "01");
-        assertThat(range[1]).isEqualTo((currentYear - 1) + "12");
+        assertThat(range[1]).isEqualTo(expectedEnd);
     }
 
     @Test

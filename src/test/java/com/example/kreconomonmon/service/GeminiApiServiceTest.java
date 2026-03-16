@@ -75,7 +75,7 @@ class GeminiApiServiceTest {
             {
               "predictions": [
                 {
-                  "bytesBese64Encoded": "base64encodedimagedata=="
+                  "bytesBase64Encoded": "base64encodedimagedata=="
                 }
               ]
             }

@@ -34,12 +34,19 @@ class GeminiAnalysisServiceTest {
     @InjectMocks
     private GeminiAnalysisService analysisService;
 
+    /** 테스트용 캐시 엔티티 빌더 */
+    private AnalysisCache buildCache(String key, String text) {
+        return AnalysisCache.builder()
+            .cacheKey(key).cacheType(key)
+            .contentText(text).dataHash("testhash")
+            .createdAt(LocalDateTime.now()).updatedAt(LocalDateTime.now())
+            .build();
+    }
+
     @Test
-    void getEconomyAnalysis_returns_cached_when_hash_matches() {
-        when(economyIndicatorRepository.findByStatCodeAndItemCodeOrderByPeriodAsc(anyString(), anyString()))
-            .thenReturn(List.of());
-        when(cacheService.computeHash(anyString())).thenReturn("testhash");
-        when(cacheService.getCachedText("ECONOMY_ANALYSIS", "testhash")).thenReturn("캐시된 경제 분석");
+    void getEconomyAnalysis_returns_cached_when_today_cache_exists() {
+        when(cacheService.findTodayCache("ECONOMY_ANALYSIS"))
+            .thenReturn(Optional.of(buildCache("ECONOMY_ANALYSIS", "캐시된 경제 분석")));
 
         Map<String, Object> result = analysisService.getEconomyAnalysis();
 
@@ -51,10 +58,10 @@ class GeminiAnalysisServiceTest {
 
     @Test
     void getEconomyAnalysis_calls_gemini_when_cache_miss() {
+        when(cacheService.findTodayCache("ECONOMY_ANALYSIS")).thenReturn(Optional.empty());
         when(economyIndicatorRepository.findByStatCodeAndItemCodeOrderByPeriodAsc(anyString(), anyString()))
             .thenReturn(List.of());
         when(cacheService.computeHash(anyString())).thenReturn("newhash");
-        when(cacheService.getCachedText("ECONOMY_ANALYSIS", "newhash")).thenReturn(null);
         when(geminiApiService.generateText(anyString())).thenReturn("새로운 분석 텍스트");
 
         Map<String, Object> result = analysisService.getEconomyAnalysis();
@@ -67,10 +74,10 @@ class GeminiAnalysisServiceTest {
 
     @Test
     void getEconomyAnalysis_returns_error_on_exception() {
+        when(cacheService.findTodayCache("ECONOMY_ANALYSIS")).thenReturn(Optional.empty());
         when(economyIndicatorRepository.findByStatCodeAndItemCodeOrderByPeriodAsc(anyString(), anyString()))
             .thenReturn(List.of());
         when(cacheService.computeHash(anyString())).thenReturn("newhash");
-        when(cacheService.getCachedText(anyString(), anyString())).thenReturn(null);
         when(geminiApiService.generateText(anyString())).thenThrow(new RuntimeException("API 오류"));
 
         Map<String, Object> result = analysisService.getEconomyAnalysis();
@@ -80,11 +87,9 @@ class GeminiAnalysisServiceTest {
     }
 
     @Test
-    void getRealEstateAnalysis_returns_cached_when_hash_matches() {
-        when(economyIndicatorRepository.findByStatCodeAndItemCodeOrderByPeriodAsc(anyString(), anyString()))
-            .thenReturn(List.of());
-        when(cacheService.computeHash(anyString())).thenReturn("testhash");
-        when(cacheService.getCachedText("REALESTATE_ANALYSIS", "testhash")).thenReturn("캐시된 부동산 분석");
+    void getRealEstateAnalysis_returns_cached_when_today_cache_exists() {
+        when(cacheService.findTodayCache("REALESTATE_ANALYSIS"))
+            .thenReturn(Optional.of(buildCache("REALESTATE_ANALYSIS", "캐시된 부동산 분석")));
 
         Map<String, Object> result = analysisService.getRealEstateAnalysis();
 
@@ -160,6 +165,7 @@ class GeminiAnalysisServiceTest {
 
     @Test
     void getEconomyAnalysis_includes_latest_indicator_in_snapshot() {
+        when(cacheService.findTodayCache("ECONOMY_ANALYSIS")).thenReturn(Optional.empty());
         EconomyIndicator indicator = EconomyIndicator.builder()
             .statCode("722Y001").itemCode("0101000").period("202502")
             .value(new BigDecimal("3.50")).updatedAt(LocalDateTime.now())
@@ -169,7 +175,6 @@ class GeminiAnalysisServiceTest {
         when(economyIndicatorRepository.findByStatCodeAndItemCodeOrderByPeriodAsc(argThat(s -> !s.equals("722Y001")), anyString()))
             .thenReturn(List.of());
         when(cacheService.computeHash(anyString())).thenReturn("h");
-        when(cacheService.getCachedText(anyString(), anyString())).thenReturn(null);
         when(geminiApiService.generateText(anyString())).thenReturn("분석결과");
 
         analysisService.getEconomyAnalysis();
