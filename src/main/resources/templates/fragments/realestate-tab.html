@@ -11,7 +11,7 @@
             <small class="text-muted">매매지수 · 전세지수 (최근 10년)</small>
         </div>
         <div class="card-body p-2">
-            <div id="chart-kb-index" class="chart-placeholder">
+            <div id="chart-kb-index" class="chart-placeholder" style="min-height:340px;">
                 <div class="spinner-border text-primary" role="status">
                     <span class="visually-hidden">로딩 중...</span>
                 </div>
@@ -86,6 +86,28 @@
                 강북권
             </button>
         </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="anyang-tab"
+                    data-bs-toggle="pill" data-bs-target="#anyang"
+                    type="button" role="tab"
+                    aria-controls="anyang" aria-selected="false"
+                    data-region="anyang"
+                    data-codes="41171,41173"
+                    data-names="만안구,동안구">
+                안양
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="seongnam-tab"
+                    data-bs-toggle="pill" data-bs-target="#seongnam"
+                    type="button" role="tab"
+                    aria-controls="seongnam" aria-selected="false"
+                    data-region="seongnam"
+                    data-codes="41131,41133"
+                    data-names="수정구,중원구">
+                성남
+            </button>
+        </li>
     </ul>
 
     <!-- 권역별 콘텐츠 -->
@@ -115,11 +137,29 @@
             <th:block th:replace="~{fragments/region-content :: region-content('gangbuk', '강북권', '종로구,마포구,용산구')}"></th:block>
         </div>
 
+        <!-- 안양 -->
+        <div class="tab-pane fade" id="anyang"
+             role="tabpanel" aria-labelledby="anyang-tab">
+            <th:block th:replace="~{fragments/region-content :: region-content('anyang', '안양', '만안구,동안구')}"></th:block>
+        </div>
+
+        <!-- 성남 -->
+        <div class="tab-pane fade" id="seongnam"
+             role="tabpanel" aria-labelledby="seongnam-tab">
+            <th:block th:replace="~{fragments/region-content :: region-content('seongnam', '성남', '수정구,중원구')}"></th:block>
+        </div>
+
     </div>
 
     <!-- Gemini 부동산 분석 영역 -->
     <div class="analysis-section mt-4" id="realestate-analysis">
-        <h6 class="fw-bold mb-2">AI 부동산 분석</h6>
+        <div class="d-flex align-items-center justify-content-between mb-2">
+            <h6 class="fw-bold mb-0">AI 부동산 분석</h6>
+            <button id="btn-realestate-refresh" class="btn btn-outline-secondary btn-sm"
+                    title="AI 분석 및 만평 새로고침">
+                <i class="bi bi-arrow-clockwise me-1"></i>새로고침
+            </button>
+        </div>
         <div id="realestate-analysis-text" class="text-muted">
             <div class="spinner-border spinner-border-sm text-primary me-2" role="status">
                 <span class="visually-hidden">분석 중...</span>
@@ -128,16 +168,6 @@
         </div>
     </div>
 
-    <!-- Gemini 부동산 컷툰 영역 -->
-    <div class="cartoon-section mt-4" id="realestate-cartoon">
-        <h6 class="fw-bold mb-2">AI 부동산 컷툰</h6>
-        <div id="realestate-cartoon-container" class="text-center py-3">
-            <div class="spinner-border spinner-border-sm text-primary me-2" role="status">
-                <span class="visually-hidden">컷툰 생성 중...</span>
-            </div>
-            <span class="text-muted">AI 컷툰을 생성 중입니다...</span>
-        </div>
-    </div>
 
 </div><!-- th:fragment -->
 </body>

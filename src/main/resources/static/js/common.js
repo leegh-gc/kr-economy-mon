@@ -30,6 +30,32 @@ const KrEconoMon = {
     },
 
     /**
+     * Gemini 분석 텍스트를 HTML로 변환 (마크다운 기본 처리)
+     * - **text** → <strong>text</strong>
+     * - ## heading → <strong class="d-block mt-2">heading</strong>
+     * - 빈 줄 → 단락 구분
+     */
+    renderAnalysis: function (text) {
+        if (!text) return '';
+        // HTML 특수문자 이스케이프
+        let html = text
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+        // ## 헤딩 처리
+        html = html.replace(/^#{1,3}\s*(.+)$/gm, '<strong class="d-block mt-2 mb-1">$1</strong>');
+        // **bold** 처리
+        html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+        // * 항목 처리 (* item)
+        html = html.replace(/^\*\s+(.+)$/gm, '• $1');
+        // 빈 줄 → 단락 구분
+        html = html.replace(/\n{2,}/g, '</p><p class="mb-1">');
+        // 나머지 개행
+        html = html.replace(/\n/g, '<br>');
+        return '<p class="mb-1">' + html + '</p>';
+    },
+
+    /**
      * AJAX GET 요청 후 콜백 실행
      * @param {string} url - API 엔드포인트
      * @param {Function} onSuccess - 성공 콜백(data)
@@ -283,9 +309,12 @@ function loadEconomyAnalysis() {
         .then(res => res.json())
         .then(data => {
             if (data.status === 'ok' && data.text) {
+                const dateLabel = data.analysedAt
+                    ? `<small class="text-muted d-block mb-2">🗓 분석일시: ${data.analysedAt}</small>`
+                    : '';
                 container.innerHTML = `
-                    <p class="mb-1">${data.text.replace(/\n/g, '<br>')}</p>
-                    <small class="text-muted">${data.cached ? '(캐시된 분석)' : '(방금 생성된 분석)'}</small>
+                    ${dateLabel}
+                    <div class="analysis-text">${KrEconoMon.renderAnalysis(data.text)}</div>
                 `;
             } else {
                 container.innerHTML = KrEconoMon.errorMessage('AI 분석을 불러올 수 없습니다.');
@@ -296,38 +325,25 @@ function loadEconomyAnalysis() {
         });
 }
 
-function loadEconomyCartoon() {
-    const container = document.getElementById('economy-cartoon-container');
-    if (!container) return;
-
-    container.innerHTML = `<div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div><span class="text-muted">AI 컷툰 생성 중...</span>`;
-
-    fetch('/krEconoMon/api/gemini/economy-cartoon')
-        .then(res => res.json())
-        .then(data => {
-            if (data.status === 'ok' && data.imageData) {
-                container.innerHTML = `
-                    <img src="data:image/png;base64,${data.imageData}" alt="AI 경제 컷툰"
-                         class="img-fluid rounded" style="max-height: 400px;">
-                    <div class="mt-1"><small class="text-muted">${data.cached ? '(캐시된 컷툰)' : '(방금 생성된 컷툰)'}</small></div>
-                `;
-            } else {
-                container.innerHTML = `<p class="text-muted small">컷툰을 불러올 수 없습니다.</p>`;
-            }
-        })
-        .catch(() => {
-            container.innerHTML = `<p class="text-muted small">컷툰 생성에 실패했습니다.</p>`;
-        });
-}
-
-function refreshGeminiAnalysis() {
+function refreshEconomyAnalysis() {
+    const refreshBtn = document.getElementById('btn-economy-refresh');
+    if (refreshBtn) {
+        refreshBtn.disabled = true;
+        refreshBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status"></span>초기화 중...';
+    }
     fetch('/krEconoMon/api/gemini/refresh', { method: 'POST' })
         .then(res => res.json())
-        .then(() => {
+        .then(() => loadEconomyAnalysis())
+        .catch(err => {
+            console.error('분석 새로고침 실패:', err);
             loadEconomyAnalysis();
-            loadEconomyCartoon();
         })
-        .catch(err => console.error('분석 새로고침 실패:', err));
+        .finally(() => {
+            if (refreshBtn) {
+                refreshBtn.disabled = false;
+                refreshBtn.innerHTML = '<i class="bi bi-arrow-clockwise me-1"></i>새로고침';
+            }
+        });
 }
 
 function loadPopulationChart() {
@@ -370,7 +386,7 @@ function loadPopulationChart() {
 document.addEventListener('DOMContentLoaded', () => {
     const economyTab = document.getElementById('economy-tab');
     if (economyTab) {
-        economyTab.addEventListener('shown.bs.tab', () => {
+        function loadAllEconomyCharts() {
             loadInterestRateChart();
             loadGdpChart();
             loadGdpIncomeChart();
@@ -382,21 +398,16 @@ document.addEventListener('DOMContentLoaded', () => {
             loadForexReserveChart();
             loadPopulationChart();
             loadEconomyAnalysis();
-            loadEconomyCartoon();
-        });
+        }
+
+        economyTab.addEventListener('shown.bs.tab', loadAllEconomyCharts);
         if (economyTab.classList.contains('active')) {
-            loadInterestRateChart();
-            loadGdpChart();
-            loadGdpIncomeChart();
-            loadExchangeRateChart();
-            loadPriceIndexChart();
-            loadTradeChart();
-            loadEmploymentChart();
-            loadLiquidityChart();
-            loadForexReserveChart();
-            loadPopulationChart();
-            loadEconomyAnalysis();
-            loadEconomyCartoon();
+            loadAllEconomyCharts();
+        }
+
+        const refreshBtn = document.getElementById('btn-economy-refresh');
+        if (refreshBtn) {
+            refreshBtn.addEventListener('click', refreshEconomyAnalysis);
         }
     }
 });

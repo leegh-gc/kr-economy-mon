@@ -52,7 +52,10 @@ public class EconomyIndicatorScheduler {
             new String[]{"901Y028", "A", "I35B"},
             new String[]{"901Y028", "A", "I35C"},
             new String[]{"901Y028", "A", "I35D"},
-            new String[]{"901Y028", "A", "I35E"}
+            new String[]{"901Y028", "A", "I35E"},
+            // KB 부동산 지수 (서울 아파트 매매/전세)
+            new String[]{"901Y062", "M", "P63ACA"},
+            new String[]{"901Y063", "M", "P64ACA"}
     );
 
     /** 매일 새벽 1시 실행 */

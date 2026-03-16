@@ -107,7 +107,7 @@ public class EcosApiService {
             };
             case "M" -> new String[]{
                     (currentYear - 10) + "01",
-                    (currentYear - 1) + "12"
+                    today.format(DateTimeFormatter.ofPattern("yyyyMM"))
             };
             case "D" -> new String[]{
                     (currentYear - 1) + "0101",
