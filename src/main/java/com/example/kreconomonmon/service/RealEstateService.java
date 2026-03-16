@@ -34,10 +34,12 @@ public class RealEstateService {
         m.put("11740", "강동구"); m.put("11350", "노원구"); m.put("11200", "성동구");
         m.put("11500", "강서구"); m.put("11560", "영등포구"); m.put("11470", "양천구");
         m.put("11110", "종로구"); m.put("11440", "마포구"); m.put("11170", "용산구");
+        m.put("41171", "만안구"); m.put("41173", "동안구");
+        m.put("41131", "수정구"); m.put("41133", "중원구");
         DISTRICT_NAMES = Collections.unmodifiableMap(m);
     }
 
-    private static final List<String> COLORS = List.of("#007bff", "#28a745", "#fd7e14");
+    private static final List<String> COLORS = List.of("#007bff", "#28a745", "#fd7e14", "#6f42c1");
 
     private String getDistrictName(String code) {
         return DISTRICT_NAMES.getOrDefault(code, code);

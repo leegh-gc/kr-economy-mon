@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HexFormat;
 import java.util.Optional;
@@ -33,6 +34,15 @@ public class AnalysisCacheService {
 
     public Optional<AnalysisCache> findByKey(String cacheKey) {
         return repository.findById(cacheKey);
+    }
+
+    /**
+     * 오늘 생성(업데이트)된 캐시가 있으면 반환. 날짜 기반 하루 1회 캐시용.
+     */
+    public Optional<AnalysisCache> findTodayCache(String cacheKey) {
+        return findByKey(cacheKey)
+            .filter(c -> c.getUpdatedAt() != null
+                      && c.getUpdatedAt().toLocalDate().equals(LocalDate.now()));
     }
 
     public String getCachedText(String cacheKey, String currentDataHash) {

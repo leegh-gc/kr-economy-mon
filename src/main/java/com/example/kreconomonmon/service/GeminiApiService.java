@@ -82,7 +82,7 @@ public class GeminiApiService {
             parts.addObject().put("text", prompt);
 
             ObjectNode generationConfig = root.putObject("generationConfig");
-            generationConfig.put("maxOutputTokens", 1024);
+            generationConfig.put("maxOutputTokens", 8192);
             generationConfig.put("temperature", 0.7);
 
             return objectMapper.writeValueAsString(root);
@@ -145,7 +145,7 @@ public class GeminiApiService {
             instance.put("prompt", prompt);
 
             ObjectNode parameters = root.putObject("parameters");
-            parameters.put("sampleCount", "1");
+            parameters.put("sampleCount", 1);
 
             return objectMapper.writeValueAsString(root);
         } catch (Exception e) {
@@ -160,7 +160,7 @@ public class GeminiApiService {
 
             if (!predictions.isMissingNode() && predictions.isArray() && predictions.size() > 0) {
                 JsonNode prediction = predictions.get(0);
-                JsonNode base64Data = prediction.path("bytesBese64Encoded");
+                JsonNode base64Data = prediction.path("bytesBase64Encoded");
                 if (!base64Data.isMissingNode()) {
                     return base64Data.asText("");
                 }

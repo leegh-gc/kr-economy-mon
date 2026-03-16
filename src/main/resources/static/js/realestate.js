@@ -9,7 +9,9 @@ const REGION_CODES = {
     gangnam:  ['11680', '11650', '11710'],
     gangdong: ['11740', '11350', '11200'],
     gangseo:  ['11500', '11560', '11470'],
-    gangbuk:  ['11110', '11440', '11170']
+    gangbuk:  ['11110', '11440', '11170'],
+    anyang:   ['41171', '41173'],
+    seongnam: ['41131', '41133']
 };
 
 function loadKbIndexChart() {
@@ -21,7 +23,10 @@ function loadKbIndexChart() {
         .then(data => {
             const container = document.getElementById('chart-kb-index');
             if (!container) return;
-            container.innerHTML = '<canvas id="kbIndexChart" height="100"></canvas>';
+            // chart-placeholder(flex)를 chart-wrapper-lg(block)로 교체해 full-width 렌더링
+            container.className = 'chart-wrapper-lg';
+            container.removeAttribute('style');
+            container.innerHTML = '<canvas id="kbIndexChart"></canvas>';
             createLineChart('kbIndexChart', data);
         })
         .catch(err => {
@@ -94,9 +99,12 @@ function loadRealEstateAnalysis() {
         .then(res => res.json())
         .then(data => {
             if (data.status === 'ok' && data.text) {
+                const dateLabel = data.analysedAt
+                    ? `<small class="text-muted d-block mb-2">🗓 분석일시: ${data.analysedAt}</small>`
+                    : '';
                 container.innerHTML = `
-                    <p class="mb-1">${data.text.replace(/\n/g, '<br>')}</p>
-                    <small class="text-muted">${data.cached ? '(캐시된 분석)' : '(방금 생성된 분석)'}</small>
+                    ${dateLabel}
+                    <div class="analysis-text">${KrEconoMon.renderAnalysis(data.text)}</div>
                 `;
             } else {
                 container.innerHTML = KrEconoMon.errorMessage('AI 분석을 불러올 수 없습니다.');
@@ -107,42 +115,23 @@ function loadRealEstateAnalysis() {
         });
 }
 
-function loadRealEstateCartoon() {
-    const container = document.getElementById('realestate-cartoon-container');
-    if (!container) return;
-
-    container.innerHTML = `<div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div><span class="text-muted">AI 컷툰 생성 중...</span>`;
-
-    fetch('/krEconoMon/api/gemini/realestate-cartoon')
-        .then(res => res.json())
-        .then(data => {
-            if (data.status === 'ok' && data.imageData) {
-                container.innerHTML = `
-                    <img src="data:image/png;base64,${data.imageData}" alt="AI 부동산 컷툰"
-                         class="img-fluid rounded" style="max-height: 400px;">
-                    <div class="mt-1"><small class="text-muted">${data.cached ? '(캐시된 컷툰)' : '(방금 생성된 컷툰)'}</small></div>
-                `;
-            } else {
-                container.innerHTML = `<p class="text-muted small">컷툰을 불러올 수 없습니다.</p>`;
-            }
-        })
-        .catch(() => {
-            container.innerHTML = `<p class="text-muted small">컷툰 생성에 실패했습니다.</p>`;
-        });
-}
 
 function loadRegionCharts(regionId, sigunguCodes) {
     const codesParam = sigunguCodes.join(',');
     const areaType = currentAreaType;
 
     const tradeContainer = document.getElementById('chart-trade-' + regionId);
-    if (tradeContainer) tradeContainer.innerHTML = KrEconoMon.loadingSpinner();
+    if (tradeContainer) {
+        tradeContainer.className = 'chart-placeholder';
+        tradeContainer.innerHTML = '<div class="spinner-border text-primary" role="status"><span class="visually-hidden">로딩 중...</span></div>';
+    }
 
     fetch(`/krEconoMon/api/real-estate/price?region=${regionId}&areaType=${areaType}&codes=${codesParam}&years=${currentYears}`)
         .then(res => res.json())
         .then(data => {
             if (tradeContainer) {
-                tradeContainer.innerHTML = `<canvas id="chart-trade-canvas-${regionId}" height="120"></canvas>`;
+                tradeContainer.className = 'chart-wrapper';
+                tradeContainer.innerHTML = `<canvas id="chart-trade-canvas-${regionId}"></canvas>`;
                 createLineChart(`chart-trade-canvas-${regionId}`, data);
             }
         })
@@ -152,13 +141,17 @@ function loadRegionCharts(regionId, sigunguCodes) {
         });
 
     const leaseContainer = document.getElementById('chart-lease-' + regionId);
-    if (leaseContainer) leaseContainer.innerHTML = KrEconoMon.loadingSpinner();
+    if (leaseContainer) {
+        leaseContainer.className = 'chart-placeholder';
+        leaseContainer.innerHTML = '<div class="spinner-border text-primary" role="status"><span class="visually-hidden">로딩 중...</span></div>';
+    }
 
     fetch(`/krEconoMon/api/real-estate/lease?region=${regionId}&areaType=${areaType}&codes=${codesParam}&years=${currentYears}`)
         .then(res => res.json())
         .then(data => {
             if (leaseContainer) {
-                leaseContainer.innerHTML = `<canvas id="chart-lease-canvas-${regionId}" height="120"></canvas>`;
+                leaseContainer.className = 'chart-wrapper';
+                leaseContainer.innerHTML = `<canvas id="chart-lease-canvas-${regionId}"></canvas>`;
                 createLineChart(`chart-lease-canvas-${regionId}`, data);
             }
         })
@@ -178,7 +171,6 @@ document.addEventListener('DOMContentLoaded', () => {
         loadKbIndexChart();
         loadRegionCharts('gangnam', REGION_CODES['gangnam']);
         loadRealEstateAnalysis();
-        loadRealEstateCartoon();
     }
 
     realEstateTab.addEventListener('shown.bs.tab', initRealEstateTab);
@@ -216,4 +208,20 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    const refreshBtn = document.getElementById('btn-realestate-refresh');
+    if (refreshBtn) {
+        refreshBtn.addEventListener('click', () => {
+            refreshBtn.disabled = true;
+            refreshBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status"></span>초기화 중...';
+            fetch('/krEconoMon/api/gemini/realestate-refresh', { method: 'POST' })
+                .then(res => res.json())
+                .then(() => loadRealEstateAnalysis())
+                .catch(() => loadRealEstateAnalysis())
+                .finally(() => {
+                    refreshBtn.disabled = false;
+                    refreshBtn.innerHTML = '<i class="bi bi-arrow-clockwise me-1"></i>새로고침';
+                });
+        });
+    }
 });

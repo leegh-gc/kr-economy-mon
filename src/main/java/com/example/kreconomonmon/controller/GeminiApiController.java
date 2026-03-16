@@ -59,6 +59,12 @@ public class GeminiApiController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/realestate-refresh")
+    public ResponseEntity<Map<String, Object>> refreshRealEstate() {
+        geminiAnalysisService.invalidateRealEstateCache();
+        return ResponseEntity.ok(Map.of("status", "ok", "message", "부동산 분석 캐시가 초기화되었습니다."));
+    }
+
     @PostMapping("/refresh")
     public ResponseEntity<Map<String, Object>> refreshAll(
             @RequestHeader(value = "X-Admin-Key", required = false) String requestAdminKey) {
