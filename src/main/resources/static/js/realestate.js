@@ -21,7 +21,7 @@ function loadKbIndexChart() {
         .then(data => {
             const container = document.getElementById('chart-kb-index');
             if (!container) return;
-            container.innerHTML = '<canvas id="kbIndexChart" height="100"></canvas>';
+            container.innerHTML = '<div class="chart-wrapper"><canvas id="kbIndexChart"></canvas></div>';
             createLineChart('kbIndexChart', data);
         })
         .catch(err => {
@@ -142,7 +142,7 @@ function loadRegionCharts(regionId, sigunguCodes) {
         .then(res => res.json())
         .then(data => {
             if (tradeContainer) {
-                tradeContainer.innerHTML = `<canvas id="chart-trade-canvas-${regionId}" height="120"></canvas>`;
+                tradeContainer.innerHTML = `<div class="chart-wrapper"><canvas id="chart-trade-canvas-${regionId}"></canvas></div>`;
                 createLineChart(`chart-trade-canvas-${regionId}`, data);
             }
         })
@@ -158,7 +158,7 @@ function loadRegionCharts(regionId, sigunguCodes) {
         .then(res => res.json())
         .then(data => {
             if (leaseContainer) {
-                leaseContainer.innerHTML = `<canvas id="chart-lease-canvas-${regionId}" height="120"></canvas>`;
+                leaseContainer.innerHTML = `<div class="chart-wrapper"><canvas id="chart-lease-canvas-${regionId}"></canvas></div>`;
                 createLineChart(`chart-lease-canvas-${regionId}`, data);
             }
         })

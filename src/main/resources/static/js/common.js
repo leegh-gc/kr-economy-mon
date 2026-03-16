@@ -71,6 +71,7 @@ function createLineChart(canvasId, chartData, options = {}) {
 
     const defaultOptions = {
         responsive: true,
+        maintainAspectRatio: false,
         interaction: { mode: 'index', intersect: false },
         plugins: {
             legend: { position: 'top' },
@@ -115,6 +116,7 @@ function createBarChart(canvasId, chartData, options = {}) {
 
     const defaultOptions = {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: { legend: { position: 'top' } },
         scales: {
             y: { ticks: { callback: (v) => v.toFixed(1) + '%' } }
