@@ -47,13 +47,27 @@ public class EcosApiService {
         return fetchStatistic(statCode, cycle, itemCode1, range[0], range[1]);
     }
 
+    /** itemCode를 두 개 붙여야 하는 통계 (예: 731Y004 월평균환율) */
+    public List<EcosApiResponse.Row> fetchStatistic(String statCode, String cycle,
+                                                     String itemCode1, String itemCode2) {
+        String[] range = buildDateRange(cycle);
+        String url = String.format(
+                "%s/StatisticSearch/%s/json/kr/1/%d/%s/%s/%s/%s/%s/%s",
+                baseUrl, apiKey, MAX_ROWS, statCode, cycle, range[0], range[1], itemCode1, itemCode2
+        );
+        return doFetch(url, statCode);
+    }
+
     public List<EcosApiResponse.Row> fetchStatistic(String statCode, String cycle, String itemCode1,
                                                      String startDate, String endDate) {
         String url = String.format(
                 "%s/StatisticSearch/%s/json/kr/1/%d/%s/%s/%s/%s/%s",
                 baseUrl, apiKey, MAX_ROWS, statCode, cycle, startDate, endDate, itemCode1
         );
+        return doFetch(url, statCode);
+    }
 
+    private List<EcosApiResponse.Row> doFetch(String url, String statCode) {
         for (int attempt = 1; attempt <= MAX_RETRY; attempt++) {
             try {
                 HttpRequest request = HttpRequest.newBuilder()
@@ -85,7 +99,6 @@ public class EcosApiService {
                 }
             }
         }
-
         return List.of();
     }
 

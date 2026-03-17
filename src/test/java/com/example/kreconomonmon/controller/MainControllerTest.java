@@ -1,10 +1,12 @@
 package com.example.kreconomonmon.controller;
 
+import com.example.kreconomonmon.service.VisitorService;
 import nz.net.ultraq.thymeleaf.layoutdialect.LayoutDialect;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
@@ -23,6 +25,9 @@ class MainControllerTest {
             return new LayoutDialect();
         }
     }
+
+    @MockBean
+    private VisitorService visitorService;
 
     @Autowired
     private MockMvc mockMvc;

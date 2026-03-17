@@ -18,6 +18,16 @@ public class EconomyIndicatorScheduler {
 
     private final EconomyIndicatorService economyIndicatorService;
 
+    /** statCode, cycle, itemCode1, itemCode2 — URL에 itemCode 두 개가 필요한 통계 */
+    @SuppressWarnings("unchecked")
+    private static final List<String[]> PAIRED_INDICATORS = List.<String[]>of(
+            // 환율 (월평균, 731Y004는 두 항목을 동시에 조회해야 데이터 반환)
+            new String[]{"731Y004", "M", "0000001", "0000100"},
+            // 고용 (901Y027도 두 항목 동시 조회 필요 — 단독 조회 시 중복 키 발생)
+            new String[]{"901Y027", "M", "I61BC", "I28B"},
+            new String[]{"901Y027", "M", "I61BA", "I28B"}
+    );
+
     /** statCode, cycle, itemCode 조합 — EconomyApiController 8개 섹션 전체 */
     private static final List<String[]> INDICATORS = List.of(
             // 금리
@@ -27,11 +37,6 @@ public class EconomyIndicatorScheduler {
             // GDP / 성장률
             new String[]{"902Y015", "Q", "KOR"},
             new String[]{"902Y018", "A", "KOR"},
-            // 환율
-            new String[]{"731Y001", "D", "0000001"},
-            new String[]{"731Y001", "D", "0000003"},
-            new String[]{"731Y001", "D", "0000002"},
-            new String[]{"731Y001", "D", "0000053"},
             // 물가
             new String[]{"901Y009", "M", "0"},
             new String[]{"404Y014", "M", "*AA"},
@@ -39,9 +44,6 @@ public class EconomyIndicatorScheduler {
             new String[]{"301Y013", "M", "000000"},
             new String[]{"901Y118", "M", "T002"},
             new String[]{"901Y118", "M", "T004"},
-            // 고용 / 경기
-            new String[]{"901Y027", "M", "I61BC"},
-            new String[]{"901Y027", "M", "I61BA"},
             // 통화 / 유동성
             new String[]{"902Y005", "M", "KR"},
             new String[]{"902Y014", "M", "KR"},
@@ -61,7 +63,8 @@ public class EconomyIndicatorScheduler {
     /** 매일 새벽 1시 실행 */
     @Scheduled(cron = "0 0 1 * * *")
     public void refreshAllIndicators() {
-        log.info("=== 경제 지표 일일 갱신 시작 ({} 건) ===", INDICATORS.size());
+        int total = INDICATORS.size() + PAIRED_INDICATORS.size();
+        log.info("=== 경제 지표 일일 갱신 시작 ({} 건) ===", total);
         int success = 0, failed = 0;
 
         for (String[] ind : INDICATORS) {
@@ -70,6 +73,16 @@ public class EconomyIndicatorScheduler {
                 success++;
             } catch (Exception e) {
                 log.error("지표 갱신 실패: statCode={}, itemCode={}", ind[0], ind[2], e);
+                failed++;
+            }
+        }
+
+        for (String[] ind : PAIRED_INDICATORS) {
+            try {
+                economyIndicatorService.refreshFromApiPair(ind[0], ind[1], ind[2], ind[3]);
+                success++;
+            } catch (Exception e) {
+                log.error("지표 갱신 실패(pair): statCode={}, itemCode1={}, itemCode2={}", ind[0], ind[2], ind[3], e);
                 failed++;
             }
         }

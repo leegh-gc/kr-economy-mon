@@ -206,15 +206,7 @@ function loadExchangeRateChart() {
         .then(data => {
             const options = {
                 scales: {
-                    y: {
-                        type: 'linear', display: true, position: 'left',
-                        title: { display: true, text: 'USD (원)' }
-                    },
-                    y1: {
-                        type: 'linear', display: true, position: 'right',
-                        title: { display: true, text: 'JPY 100엔 (원)' },
-                        grid: { drawOnChartArea: false }
-                    }
+                    y: { title: { display: true, text: '환율 (원)' } }
                 }
             };
             createLineChart('exchangeRateChart', data, options);
@@ -265,13 +257,25 @@ function loadEmploymentChart() {
             return res.json();
         })
         .then(data => {
+            // yAxisID를 JS에서 명시 할당 (JSON 직렬화 타이밍 문제 방지)
+            if (data.datasets?.[0]) data.datasets[0].yAxisID = 'y';   // 실업률
+            if (data.datasets?.[1]) data.datasets[1].yAxisID = 'y1';  // 취업자수
             const options = {
                 scales: {
-                    y:  { type: 'linear', display: true, position: 'left',
-                          title: { display: true, text: '실업률 (%)' } },
-                    y1: { type: 'linear', display: true, position: 'right',
-                          title: { display: true, text: '취업자수 (천명)' },
-                          grid: { drawOnChartArea: false } }
+                    x: { ticks: { maxTicksLimit: 12 } },
+                    y: {
+                        type: 'linear', display: true, position: 'left',
+                        title: { display: true, text: '실업률 (%)' },
+                        min: 0, suggestedMax: 8,
+                        ticks: { callback: v => v.toFixed(1) + '%' }
+                    },
+                    y1: {
+                        type: 'linear', display: true, position: 'right',
+                        title: { display: true, text: '취업자수 (천명)' },
+                        suggestedMin: 20000, suggestedMax: 32000,
+                        grid: { drawOnChartArea: false },
+                        ticks: { callback: v => v.toLocaleString() }
+                    }
                 }
             };
             createLineChart('employmentChart', data, options);
@@ -383,7 +387,20 @@ function loadPopulationChart() {
         .catch(err => { console.error('인구 데이터 로드 실패:', err); showChartError('populationChart', '인구 데이터를 불러올 수 없습니다.'); });
 }
 
+function loadVisitorCount() {
+    fetch('/krEconoMon/api/visitor')
+        .then(res => res.json())
+        .then(data => {
+            const el = document.getElementById('visitor-count');
+            if (el) {
+                el.innerHTML = `<i class="bi bi-eye me-1"></i>오늘: ${data.today.toLocaleString()} | 누적: ${data.total.toLocaleString()}`;
+            }
+        })
+        .catch(() => {});
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+    loadVisitorCount();
     const economyTab = document.getElementById('economy-tab');
     if (economyTab) {
         function loadAllEconomyCharts() {

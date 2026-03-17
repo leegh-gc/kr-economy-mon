@@ -95,13 +95,16 @@ public class EconomyApiController {
         return ResponseEntity.ok(response);
     }
 
-    // ── 섹션3: 환율 ──────────────────────────────────────
+    // ── 섹션3: 환율 (월평균, 731Y004) ────────────────────
+    private static final String FX_STAT  = "731Y004";
+    private static final String FX_USD   = "0000001";
+    private static final String FX_EUR   = "0000100";
+
     @GetMapping("/exchange-rate")
     public ResponseEntity<ChartDataResponse> getExchangeRate() {
-        List<EconomyIndicator> usd =
-                economyIndicatorService.getIndicators("731Y001", "D", "0000001");
-        List<EconomyIndicator> jpy =
-                economyIndicatorService.getIndicators("731Y001", "D", "0000002");
+        var pair = economyIndicatorService.getIndicatorsPair(FX_STAT, "M", FX_USD, FX_EUR);
+        List<EconomyIndicator> usd = pair.getOrDefault(FX_USD, List.of());
+        List<EconomyIndicator> eur = pair.getOrDefault(FX_EUR, List.of());
 
         List<String> labels = usd.stream()
                 .map(EconomyIndicator::getPeriod)
@@ -110,8 +113,8 @@ public class EconomyApiController {
         ChartDataResponse response = ChartDataResponse.builder()
                 .labels(labels)
                 .datasets(List.of(
-                        toDataset(usd, "USD (원)", "#007bff", "y"),
-                        toDataset(jpy, "JPY 100엔 (원)", "#dc3545", "y1")
+                        toDataset(usd, "USD (원)", "#007bff", null),
+                        toDataset(eur, "EUR (원)", "#dc3545", null)
                 ))
                 .build();
 
